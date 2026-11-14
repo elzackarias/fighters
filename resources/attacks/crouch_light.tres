@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/attack_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+attack_name = "Patadita baja"
+animation = &"crouch_light"
+damage = 4
+chip_damage = 0
+height = 1
+startup_frames = 4
+active_frames = 3
+recovery_frames = 7
+hitstun_frames = 12
+blockstun_frames = 8
+knockback = Vector2(110, 0)
+hitbox_offset = Vector2(55, -30)
+hitbox_size = Vector2(60, 20)

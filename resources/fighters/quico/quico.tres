@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="FighterData" format=3 uid="uid://dfe8xvwstj2fo"]
+
+[ext_resource type="Script" uid="uid://l6lr7lssbpyt" path="res://scripts/data/fighter_data.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/attacks/light_punch.tres" id="2"]
+[ext_resource type="Resource" path="res://resources/attacks/heavy_punch.tres" id="3"]
+[ext_resource type="Resource" path="res://resources/attacks/crouch_light.tres" id="4"]
+[ext_resource type="Resource" path="res://resources/attacks/crouch_heavy.tres" id="5"]
+[ext_resource type="Resource" path="res://resources/attacks/air_kick.tres" id="6"]
+[ext_resource type="SpriteFrames" uid="uid://baoes13bxhe4s" path="res://resources/fighters/quico/quico_frames.tres" id="7_4gwpi"]
+
+[resource]
+script = ExtResource("1")
+display_name = "Quico"
+intro_quote = "¡Cállate, cállate, que me desesperas!"
+max_health = 90
+walk_speed = 210
+jump_velocity = -630
+damage_multiplier = 0.9
+body_height = 128.0
+placeholder_color = Color(0.25, 0.42, 0.85, 1)
+sprite_frames = ExtResource("7_4gwpi")
+sprite_scale = 1.3
+light_attack = ExtResource("2")
+heavy_attack = ExtResource("3")
+crouch_light_attack = ExtResource("4")
+crouch_heavy_attack = ExtResource("5")
+air_attack = ExtResource("6")

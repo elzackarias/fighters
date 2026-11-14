@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/attack_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+attack_name = "Golpe ligero"
+animation = &"light_punch"
+damage = 5
+chip_damage = 0
+height = 0
+startup_frames = 4
+active_frames = 3
+recovery_frames = 8
+hitstun_frames = 14
+blockstun_frames = 9
+knockback = Vector2(140, 0)
+hitbox_offset = Vector2(55, -100)
+hitbox_size = Vector2(60, 22)

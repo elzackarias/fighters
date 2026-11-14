@@ -1,0 +1,230 @@
+{
+ "background": [
+  128,
+  128,
+  255
+ ],
+ "sheets": {
+  "p1": {
+   "source": "assets/sprites/fighters/don_ramon/donramon_part1.png",
+   "output": "assets/sprites/fighters/don_ramon/donramon_part1_alpha.png"
+  }
+ },
+ "output_tres": "resources/fighters/don_ramon/don_ramon_frames.tres",
+ "animations": [
+  {
+   "name": "idle",
+   "sheet": "p1",
+   "box": [
+    40,
+    421,
+    1827,
+    556
+   ],
+   "speed": 10,
+   "loop": true,
+   "frames": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+   ]
+  },
+  {
+   "name": "walk",
+   "sheet": "p1",
+   "box": [
+    74,
+    1296,
+    647,
+    1421
+   ],
+   "speed": 12,
+   "loop": true
+  },
+  {
+   "name": "walk_back",
+   "sheet": "p1",
+   "box": [
+    937,
+    1302,
+    1679,
+    1421
+   ],
+   "speed": 12,
+   "loop": true
+  },
+  {
+   "name": "jump",
+   "sheet": "p1",
+   "box": [
+    74,
+    2645,
+    1099,
+    2814
+   ],
+   "speed": 12,
+   "frames": [
+    3,
+    4,
+    5
+   ]
+  },
+  {
+   "name": "fall",
+   "sheet": "p1",
+   "box": [
+    74,
+    2645,
+    1099,
+    2814
+   ],
+   "speed": 10,
+   "loop": false,
+   "frames": [
+    6,
+    7,
+    8
+   ]
+  },
+  {
+   "name": "crouch",
+   "sheet": "p1",
+   "box": [
+    67,
+    847,
+    1753,
+    964
+   ],
+   "speed": 20,
+   "frames": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ]
+  },
+  {
+   "name": "block",
+   "sheet": "p1",
+   "box": [
+    7,
+    1134,
+    492,
+    1269
+   ],
+   "speed": 20,
+   "frames": [
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "name": "crouch_block",
+   "sheet": "p1",
+   "box": [
+    1436,
+    1151,
+    1706,
+    1251
+   ],
+   "speed": 20,
+   "frames": [
+    0,
+    1,
+    2
+   ]
+  },
+  {
+   "name": "hit",
+   "sheet": "p1",
+   "box": [
+    1436,
+    2553,
+    1875,
+    2685
+   ],
+   "speed": 14
+  },
+  {
+   "name": "ko",
+   "sheet": "p1",
+   "box": [
+    54,
+    5054,
+    1639,
+    5185
+   ],
+   "speed": 12
+  },
+  {
+   "name": "victory",
+   "sheet": "p1",
+   "box": [
+    7,
+    1848,
+    1875,
+    1983
+   ],
+   "speed": 12
+  },
+  {
+   "name": "heavy_punch",
+   "sheet": "p1",
+   "box": [
+    769,
+    2010,
+    1200,
+    2165
+   ],
+   "frames": [
+    0,
+    3,
+    4,
+    5,
+    2,
+    1
+   ]
+  },
+  {
+   "name": "light_punch",
+   "sheet": "p1",
+   "box": [
+    769,
+    2010,
+    1200,
+    2165
+   ],
+   "frames": [
+    3,
+    5,
+    2,
+    1
+   ]
+  }
+ ],
+ "erase_colors": [
+  [
+   255,
+   0,
+   255
+  ],
+  [
+   0,
+   0,
+   255
+  ]
+ ]
+}

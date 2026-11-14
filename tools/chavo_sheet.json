@@ -1,0 +1,289 @@
+{
+ "background": [
+  128,
+  128,
+  255
+ ],
+ "sheets": {
+  "p1": {
+   "source": "assets/sprites/fighters/chavo/chavo_part1.png",
+   "output": "assets/sprites/fighters/chavo/chavo_part1_alpha.png"
+  },
+  "p2": {
+   "source": "assets/sprites/fighters/chavo/chavo_part2.png",
+   "output": "assets/sprites/fighters/chavo/chavo_part2_alpha.png"
+  },
+  "p4": {
+   "source": "assets/sprites/fighters/chavo/chavo_part4.png",
+   "output": "assets/sprites/fighters/chavo/chavo_part4_alpha.png"
+  },
+  "p5": {
+   "source": "assets/sprites/fighters/chavo/chavo_part5.png",
+   "output": "assets/sprites/fighters/chavo/chavo_part5_alpha.png"
+  }
+ },
+ "output_tres": "resources/fighters/chavo/chavo_frames.tres",
+ "animations": [
+  {
+   "name": "idle",
+   "sheet": "p1",
+   "box": [
+    65,
+    577,
+    542,
+    678
+   ],
+   "speed": 10,
+   "loop": true
+  },
+  {
+   "name": "walk",
+   "sheet": "p2",
+   "box": [
+    84,
+    1203,
+    642,
+    1296
+   ],
+   "speed": 14,
+   "loop": true
+  },
+  {
+   "name": "walk_back",
+   "sheet": "p2",
+   "box": [
+    124,
+    1327,
+    700,
+    1423
+   ],
+   "speed": 14,
+   "loop": true
+  },
+  {
+   "name": "jump",
+   "sheet": "p2",
+   "box": [
+    74,
+    646,
+    865,
+    782
+   ],
+   "speed": 12,
+   "frames": [
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ]
+  },
+  {
+   "name": "fall",
+   "sheet": "p2",
+   "box": [
+    74,
+    646,
+    865,
+    782
+   ],
+   "speed": 10,
+   "frames": [
+    8,
+    9,
+    10
+   ],
+   "loop": true
+  },
+  {
+   "name": "crouch",
+   "sheet": "p2",
+   "box": [
+    84,
+    1783,
+    676,
+    1875
+   ],
+   "speed": 20,
+   "frames": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "name": "block",
+   "sheet": "p2",
+   "box": [
+    146,
+    1530,
+    557,
+    1631
+   ],
+   "speed": 20,
+   "frames": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "name": "crouch_block",
+   "sheet": "p2",
+   "box": [
+    165,
+    1431,
+    777,
+    1527
+   ],
+   "speed": 20,
+   "frames": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "name": "hit",
+   "sheet": "p4",
+   "box": [
+    111,
+    160,
+    476,
+    258
+   ],
+   "speed": 14,
+   "frames": [
+    0
+   ]
+  },
+  {
+   "name": "hit_hard",
+   "sheet": "p1",
+   "box": [
+    1497,
+    3607,
+    1746,
+    3713
+   ],
+   "speed": 16
+  },
+  {
+   "name": "hit_air",
+   "sheet": "p4",
+   "box": [
+    111,
+    160,
+    896,
+    288
+   ],
+   "frames": [
+    1,
+    2,
+    3
+   ],
+   "speed": 12
+  },
+  {
+   "name": "ko",
+   "sheet": "p4",
+   "box": [
+    111,
+    160,
+    896,
+    288
+   ],
+   "speed": 12
+  },
+  {
+   "name": "victory",
+   "sheet": "p2",
+   "boxes": [
+    [
+     11,
+     991,
+     1890,
+     1087
+    ],
+    [
+     7,
+     1100,
+     771,
+     1191
+    ]
+   ],
+   "speed": 14,
+   "loop": true
+  },
+  {
+   "name": "light_punch",
+   "sheet": "p5",
+   "box": [
+    135,
+    748,
+    418,
+    850
+   ]
+  },
+  {
+   "name": "heavy_punch",
+   "sheet": "p5",
+   "box": [
+    146,
+    860,
+    1065,
+    974
+   ],
+   "frames": [
+    0,
+    1,
+    3,
+    4,
+    5
+   ],
+   "anchor": "feet"
+  },
+  {
+   "name": "crouch_light",
+   "sheet": "p5",
+   "box": [
+    890,
+    663,
+    1173,
+    742
+   ]
+  },
+  {
+   "name": "crouch_heavy",
+   "sheet": "p5",
+   "box": [
+    151,
+    975,
+    829,
+    1165
+   ],
+   "anchor": "feet"
+  },
+  {
+   "name": "air_kick",
+   "sheet": "p5",
+   "box": [
+    1322,
+    645,
+    1659,
+    739
+   ]
+  }
+ ],
+ "erase_colors": [
+  [
+   0,
+   0,
+   255
+  ]
+ ]
+}

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="LevelData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/level_data.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/fighters/don_ramon/don_ramon.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+level_name = "Nivel 2"
+stage_name = "La Escuelita"
+opponent = ExtResource("2")
+background_color = Color(0.82, 0.78, 0.6, 1)
+floor_color = Color(0.45, 0.3, 0.2, 1)
+rounds_to_win = 2
+round_time = 60
+ai_reaction_time = 0.32
+ai_aggression = 0.55
+ai_block_chance = 0.35

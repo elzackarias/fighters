@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://dtc3bakvpr1c2"]
+
+[ext_resource type="Script" uid="uid://c5ewppl8uvr8c" path="res://scripts/ui/main_menu.gd" id="1_menu"]
+
+[node name="MainMenu" type="Control" unique_id=632650492]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="Background" type="ColorRect" parent="." unique_id=640199404]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.20723939, 0.7725758, 0.883712, 1)
+
+[node name="Center" type="CenterContainer" parent="." unique_id=1028561853]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Center" unique_id=475180765]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Title" type="Label" parent="Center/VBox" unique_id=100081507]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0.25, 0.12, 0.05, 1)
+theme_override_constants/outline_size = 14
+theme_override_font_sizes/font_size = 72
+text = "Water Fighters"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Center/VBox" unique_id=1934311378]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Pi Pi Pi Pi Pi Pi Pi Pi Pi Pi Pi Pi"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="Center/VBox" unique_id=3100948]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+
+[node name="PlayButton" type="Button" parent="Center/VBox" unique_id=844878693]
+custom_minimum_size = Vector2(320, 56)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 28
+text = "Jugar"
+
+[node name="InstructionsButton" type="Button" parent="Center/VBox" unique_id=1575600551]
+custom_minimum_size = Vector2(320, 56)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 28
+text = "Instrucciones"
+
+[node name="QuitButton" type="Button" parent="Center/VBox" unique_id=1065502043]
+custom_minimum_size = Vector2(320, 56)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 28
+text = "Salir"

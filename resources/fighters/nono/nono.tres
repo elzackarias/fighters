@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="FighterData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/fighter_data.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/attacks/light_punch.tres" id="2"]
+[ext_resource type="Resource" path="res://resources/attacks/heavy_punch.tres" id="3"]
+[ext_resource type="Resource" path="res://resources/attacks/crouch_light.tres" id="4"]
+[ext_resource type="Resource" path="res://resources/attacks/crouch_heavy.tres" id="5"]
+[ext_resource type="Resource" path="res://resources/attacks/air_kick.tres" id="6"]
+
+[resource]
+script = ExtResource("1")
+display_name = "Ñoño"
+intro_quote = "Mi papi me trajo a Acapulco."
+max_health = 140
+walk_speed = 170
+jump_velocity = -560
+damage_multiplier = 1.25
+body_height = 130.0
+placeholder_color = Color(0.92, 0.86, 0.62, 1)
+light_attack = ExtResource("2")
+heavy_attack = ExtResource("3")
+crouch_light_attack = ExtResource("4")
+crouch_heavy_attack = ExtResource("5")
+air_attack = ExtResource("6")

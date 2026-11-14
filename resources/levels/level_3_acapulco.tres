@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="LevelData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/level_data.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/fighters/nono/nono.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+level_name = "Nivel 3"
+stage_name = "Acapulco"
+opponent = ExtResource("2")
+background_color = Color(0.3, 0.7, 0.95, 1)
+floor_color = Color(0.93, 0.84, 0.6, 1)
+rounds_to_win = 2
+round_time = 60
+ai_reaction_time = 0.22
+ai_aggression = 0.72
+ai_block_chance = 0.5

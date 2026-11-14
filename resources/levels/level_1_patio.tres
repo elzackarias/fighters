@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="LevelData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/level_data.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/fighters/quico/quico.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+level_name = "Nivel 1"
+stage_name = "El Patio"
+opponent = ExtResource("2")
+background_color = Color(0.55, 0.75, 0.92, 1)
+floor_color = Color(0.6, 0.52, 0.42, 1)
+rounds_to_win = 2
+round_time = 60
+ai_reaction_time = 0.45
+ai_aggression = 0.35
+ai_block_chance = 0.15

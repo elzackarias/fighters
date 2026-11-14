@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="FighterData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/fighter_data.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/attacks/light_punch.tres" id="2"]
+[ext_resource type="Resource" path="res://resources/attacks/heavy_punch.tres" id="3"]
+[ext_resource type="Resource" path="res://resources/attacks/crouch_light.tres" id="4"]
+[ext_resource type="Resource" path="res://resources/attacks/crouch_heavy.tres" id="5"]
+[ext_resource type="Resource" path="res://resources/attacks/air_kick.tres" id="6"]
+[ext_resource type="SpriteFrames" path="res://resources/fighters/don_ramon/don_ramon_frames.tres" id="7"]
+
+[resource]
+script = ExtResource("1")
+display_name = "Don Ramón"
+intro_quote = "¿Qué pasó, qué pasó? ¡Vamos!"
+max_health = 110
+walk_speed = 240
+jump_velocity = -660
+damage_multiplier = 1.1
+body_height = 165.0
+placeholder_color = Color(0.28, 0.3, 0.36, 1)
+sprite_frames = ExtResource("7")
+sprite_scale = 1.37
+light_attack = ExtResource("2")
+heavy_attack = ExtResource("3")
+crouch_light_attack = ExtResource("4")
+crouch_heavy_attack = ExtResource("5")
+air_attack = ExtResource("6")
