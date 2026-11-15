@@ -28,6 +28,9 @@ var _awaiting_retry: bool = false
 @onready var _background: ColorRect = $Backdrop/Background
 @onready var _background_sprite: Sprite2D = $Backdrop/BackgroundSprite
 @onready var _stage_label: Label = $Backdrop/StageLabel
+@onready var _stage_sprite: Sprite2D = $StageSprite
+@onready var _floor: StaticBody2D = $Floor
+@onready var _floor_shape: CollisionShape2D = $Floor/CollisionShape2D
 @onready var _camera: Camera2D = $Camera
 @onready var _floor_visual: ColorRect = $Floor/Visual
 @onready var _player_spawn: Marker2D = $PlayerSpawn
@@ -76,10 +79,37 @@ func _setup_stage() -> void:
 	_stage_label.text = level.stage_name.to_upper()
 	if level.background_texture:
 		_background_sprite.texture = level.background_texture
+		_fit_background_to_viewport()
+		get_viewport().size_changed.connect(_fit_background_to_viewport)
+		_stage_label.hide()
+	if level.stage_texture:
+		_place_stage_sprite()
+		_floor_visual.hide()
 		_stage_label.hide()
 	if level.music:
 		_music.stream = level.music
 		_music.play()
+
+
+## El cielo está en un CanvasLayer (coordenadas de pantalla): lo escalamos
+## para cubrir toda la ventana, aunque el aspecto "expand" la haga más ancha.
+func _fit_background_to_viewport() -> void:
+	var tex_size := _background_sprite.texture.get_size()
+	var view_size := get_viewport_rect().size
+	var s := maxf(view_size.x / tex_size.x, view_size.y / tex_size.y)
+	_background_sprite.scale = Vector2(s, s)
+
+
+## Escala el escenario al ancho del arena (límites de la cámara) y lo sube/baja
+## para que la fila stage_floor_y coincida con la parte superior del piso físico.
+func _place_stage_sprite() -> void:
+	_stage_sprite.texture = level.stage_texture
+	var tex_size := level.stage_texture.get_size()
+	var arena_width := float(_camera.limit_right - _camera.limit_left)
+	var s := arena_width / tex_size.x
+	var floor_top := _floor.position.y - (_floor_shape.shape as RectangleShape2D).size.y * 0.5
+	_stage_sprite.scale = Vector2(s, s)
+	_stage_sprite.position = Vector2(_camera.limit_left, floor_top - level.stage_floor_y * s)
 
 
 func _spawn_fighters() -> void:

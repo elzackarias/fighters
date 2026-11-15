@@ -8,8 +8,14 @@ extends Resource
 @export var opponent: FighterData
 
 @export_group("Escenario")
-## Fondo final. Mientras sea null se usan los colores provisionales.
+## Fondo lejano (cielo). Fijo en pantalla, se escala para cubrir la ventana.
+## Mientras sea null se usa background_color.
 @export var background_texture: Texture2D
+## Escenario con su propio piso. Vive en el mundo (se desplaza con la cámara)
+## y se escala para cubrir todo el ancho del arena. Si es null se usa floor_color.
+@export var stage_texture: Texture2D
+## Fila (en píxeles de stage_texture) donde apoyan los pies los luchadores.
+@export var stage_floor_y: float = 0.0
 @export var background_color: Color = Color(0.45, 0.65, 0.9)
 @export var floor_color: Color = Color(0.55, 0.45, 0.35)
 @export var music: AudioStream
