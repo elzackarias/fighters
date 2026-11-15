@@ -16,6 +16,10 @@ extends Resource
 @export var stage_texture: Texture2D
 ## Fila (en píxeles de stage_texture) donde apoyan los pies los luchadores.
 @export var stage_floor_y: float = 0.0
+## Escala del escenario en el mundo. 0 = automático (cubre el ancho del arena).
+## Si el escenario escalado queda más angosto que el arena, el arena (paredes y
+## límites de la cámara) se encoge a su ancho, centrado.
+@export var stage_scale: float = 0.0
 @export var background_color: Color = Color(0.45, 0.65, 0.9)
 @export var floor_color: Color = Color(0.55, 0.45, 0.35)
 @export var music: AudioStream

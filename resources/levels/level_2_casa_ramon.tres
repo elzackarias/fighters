@@ -2,14 +2,18 @@
 
 [ext_resource type="Script" path="res://scripts/data/level_data.gd" id="1"]
 [ext_resource type="Resource" path="res://resources/fighters/don_ramon/don_ramon.tres" id="2"]
+[ext_resource type="Texture2D" uid="uid://cr4yt6fnsvk1x" path="res://assets/sprites/stages/casaramon/don_ramon_stage.png" id="3"]
 
 [resource]
 script = ExtResource("1")
 level_name = "Nivel 2"
-stage_name = "La Escuelita"
+stage_name = "La Casa de Don Ramón"
 opponent = ExtResource("2")
-background_color = Color(0.82, 0.78, 0.6, 1)
-floor_color = Color(0.45, 0.3, 0.2, 1)
+stage_texture = ExtResource("3")
+stage_floor_y = 290.0
+stage_scale = 1.35
+background_color = Color(0.545, 0.537, 0.478, 1)
+floor_color = Color(0.584, 0.588, 0.408, 1)
 rounds_to_win = 2
 round_time = 60
 ai_reaction_time = 0.32

@@ -5,8 +5,9 @@ extends Node2D
 
 const FIGHTER_SCENE := preload("res://scenes/fighters/fighter.tscn")
 const MIN_SEPARATION := 60.0  # los luchadores no se atraviesan
-const STAGE_LEFT := 60.0
-const STAGE_RIGHT := 1220.0
+## Distancia del borde del arena al centro de cada pared y al límite de los luchadores.
+const WALL_INSET := 20.0
+const STAGE_INSET := 60.0
 ## Cámara estilo Street Fighter: zoom fijo (en la escena) y sigue el punto medio
 ## entre los luchadores. Así se ven grandes sin tocar hitboxes ni velocidades.
 const CAMERA_SCREEN_MARGIN := 45.0  # distancia mínima (mundo) de un luchador al borde visible
@@ -24,6 +25,8 @@ var enemy: Fighter
 var phase: Phase = Phase.INTRO
 var time_left: float = 0.0
 var _awaiting_retry: bool = false
+var _stage_left: float
+var _stage_right: float
 
 @onready var _background: ColorRect = $Backdrop/Background
 @onready var _background_sprite: Sprite2D = $Backdrop/BackgroundSprite
@@ -32,6 +35,8 @@ var _awaiting_retry: bool = false
 @onready var _floor: StaticBody2D = $Floor
 @onready var _floor_shape: CollisionShape2D = $Floor/CollisionShape2D
 @onready var _camera: Camera2D = $Camera
+@onready var _wall_left: StaticBody2D = $WallLeft
+@onready var _wall_right: StaticBody2D = $WallRight
 @onready var _floor_visual: ColorRect = $Floor/Visual
 @onready var _player_spawn: Marker2D = $PlayerSpawn
 @onready var _enemy_spawn: Marker2D = $EnemySpawn
@@ -74,6 +79,7 @@ func _unhandled_input(event: InputEvent) -> void:
 # --- Preparación -------------------------------------------------------------
 
 func _setup_stage() -> void:
+	_set_arena_bounds(_camera.limit_left, _camera.limit_right)
 	_background.color = level.background_color
 	_floor_visual.color = level.floor_color
 	_stage_label.text = level.stage_name.to_upper()
@@ -100,16 +106,36 @@ func _fit_background_to_viewport() -> void:
 	_background_sprite.scale = Vector2(s, s)
 
 
-## Escala el escenario al ancho del arena (límites de la cámara) y lo sube/baja
+## Escala el escenario (stage_scale, o al ancho del arena si es 0) y lo sube/baja
 ## para que la fila stage_floor_y coincida con la parte superior del piso físico.
+## Si queda más angosto que el arena, el arena se encoge a su ancho (centrado).
 func _place_stage_sprite() -> void:
 	_stage_sprite.texture = level.stage_texture
 	var tex_size := level.stage_texture.get_size()
+	var arena_left := float(_camera.limit_left)
 	var arena_width := float(_camera.limit_right - _camera.limit_left)
-	var s := arena_width / tex_size.x
+	var s := level.stage_scale if level.stage_scale > 0.0 else arena_width / tex_size.x
+	var stage_width := tex_size.x * s
+	var left := arena_left
+	if stage_width < arena_width:
+		left = arena_left + (arena_width - stage_width) * 0.5
+		_set_arena_bounds(left, left + stage_width)
 	var floor_top := _floor.position.y - (_floor_shape.shape as RectangleShape2D).size.y * 0.5
+	var top := floor_top - level.stage_floor_y * s
 	_stage_sprite.scale = Vector2(s, s)
-	_stage_sprite.position = Vector2(_camera.limit_left, floor_top - level.stage_floor_y * s)
+	_stage_sprite.position = Vector2(left, top)
+	# Que la cámara nunca muestre debajo del escenario (el piso de color está oculto).
+	_camera.limit_bottom = mini(_camera.limit_bottom, floori(top + tex_size.y * s))
+
+
+## Mueve límites de cámara, paredes y el tope de los luchadores a [left, right].
+func _set_arena_bounds(left: float, right: float) -> void:
+	_camera.limit_left = ceili(left)
+	_camera.limit_right = floori(right)
+	_wall_left.position.x = left + WALL_INSET
+	_wall_right.position.x = right - WALL_INSET
+	_stage_left = left + STAGE_INSET
+	_stage_right = right - STAGE_INSET
 
 
 func _spawn_fighters() -> void:
@@ -240,8 +266,8 @@ func _keep_fighters_apart() -> void:
 		return
 	var dir := signf(dx) if dx != 0.0 else float(player.facing)
 	var push := (MIN_SEPARATION - absf(dx)) * 0.5
-	player.global_position.x = clampf(player.global_position.x - dir * push, STAGE_LEFT, STAGE_RIGHT)
-	enemy.global_position.x = clampf(enemy.global_position.x + dir * push, STAGE_LEFT, STAGE_RIGHT)
+	player.global_position.x = clampf(player.global_position.x - dir * push, _stage_left, _stage_right)
+	enemy.global_position.x = clampf(enemy.global_position.x + dir * push, _stage_left, _stage_right)
 
 
 # --- Cámara ------------------------------------------------------------------

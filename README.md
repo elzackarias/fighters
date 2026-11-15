@@ -2,11 +2,11 @@
 
 Juego de peleas 2D estilo *Street Fighter* con los personajes de **El Chavo animado**, hecho en **Godot 4**. Fan game sin fines de lucro.
 
-![Chavo contra Don Ramón en La Escuelita](docs/screenshot.png)
+![Chavo contra Don Ramón](docs/screenshot.png)
 
 ## Características
 
-- **Modo arcade de 3 niveles**: El Patio (vs. Quico), La Escuelita (vs. Don Ramón) y Acapulco (vs. Ñoño), al mejor de 3 rounds.
+- **Modo arcade de 3 niveles**: El Patio (vs. Quico), La Casa de Don Ramón (vs. Don Ramón) y Acapulco (vs. Ñoño), al mejor de 3 rounds.
 - **Combate de juego de peleas**: golpe ligero y pesado, ataques agachado y aéreo, bloqueo alto/bajo, hitstun/blockstun, empuje, KO y buffer de entrada.
 - **IA por niveles**: máquina de estados (perseguir, atacar, bloquear, retroceder) con tiempo de reacción, agresividad y bloqueo configurables por nivel.
 - **Animaciones por contexto**: caminar hacia adelante y atrás, subida y caída del salto, bloqueo de pie y agachado, reacción según el golpe (alto, fuerte, bajo, aéreo, agachado), KO y pose de victoria.

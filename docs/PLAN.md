@@ -9,7 +9,7 @@
 res://
 ├── assets/                     # Arte y audio (solo archivos fuente importados)
 │   ├── sprites/fighters/{chavo,quico,don_ramon,nono}/
-│   ├── sprites/stages/{patio,escuelita,acapulco}/
+│   ├── sprites/stages/{patio,casaramon,acapulco}/
 │   ├── sprites/ui/
 │   ├── audio/{music,sfx}/
 │   └── fonts/

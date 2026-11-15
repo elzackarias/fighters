@@ -20,7 +20,7 @@ const VICTORY_SCENE := "res://scenes/ui/victory_screen.tscn"
 const PLAYER_FIGHTER := "res://resources/fighters/chavo/chavo.tres"
 const LEVELS: Array[String] = [
 	"res://resources/levels/level_1_patio.tres",
-	"res://resources/levels/level_2_escuelita.tres",
+	"res://resources/levels/level_2_casa_ramon.tres",
 	"res://resources/levels/level_3_acapulco.tres",
 ]
 const FADE_TIME := 0.35
