@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/attack_data.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/attacks/chavo/azotes_whiff.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+attack_name = "Azotes de escobazos"
+animation = &"azotes"
+damage = 5
+knockdown = true
+is_throw = true
+whiff_attack = ExtResource("2")
+startup_frames = 26
+active_frames = 46
+recovery_frames = 16
+hitstun_frames = 30
+max_hits = 4
+rehit_frames = 14
+knockback = Vector2(360, -420)
+hitbox_offset = Vector2(45, -80)
+hitbox_size = Vector2(40, 40)

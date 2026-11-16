@@ -23,21 +23,21 @@ func _ready() -> void:
 	p.is_player = false
 	e.controls_enabled = false  # rival quieto
 
-	# índices en chavo.tres: 0 chipote, 1 cachetes, 2 chapulín, 3 escobazos,
-	# 4 salto, 5 resortera, 6 torta
+	# índices en chavo.tres: 0 chipote, 1 cachetes, 2 bruja, 3 chapulín, 4 escobazos,
+	# 5 azotes, 6 salto, 7 resortera, 8 torta
 	await _place(p, e, 300.0)
-	await _special(p, 5, false, [0.2, 0.35, 0.55])
+	await _special(p, 7, false, [0.2, 0.35, 0.55])
 	await _place(p, e, 100.0)
-	await _special(p, 3, true, [0.15, 0.35, 0.55, 0.8])
+	await _special(p, 4, true, [0.15, 0.35, 0.55, 0.8])
 	await _place(p, e, 140.0)
 	p.power = 300
 	await _special(p, 1, false, [0.05, 0.6, 0.8, 1.0])
 	await _place(p, e, 260.0)
 	p.commands.jump = true
 	await tree.create_timer(0.15).timeout
-	await _special(p, 6, false, [0.1, 0.3, 0.45])
+	await _special(p, 8, false, [0.1, 0.3, 0.45])
 	await _place(p, e, 130.0)
-	await _special(p, 4, false, [0.2, 0.45, 0.75, 1.1])
+	await _special(p, 6, false, [0.2, 0.45, 0.75, 1.1])
 	await _place(p, e, 62.0)
 	await _throw(p, [0.3, 0.75, 1.0, 1.6])
 	await _place(p, e, 150.0)
@@ -45,7 +45,12 @@ func _ready() -> void:
 	await _special(p, 0, false, [0.6, 1.3, 1.45, 1.75])
 	await _place(p, e, 100.0)
 	p.power = 300
-	await _special(p, 2, false, [0.5, 0.9, 1.3, 1.8])
+	await _special(p, 3, false, [0.5, 0.9, 1.3, 1.8])
+	await _place(p, e, 200.0)
+	p.power = 300
+	await _special(p, 2, false, [0.3, 0.9, 1.2, 1.6, 2.2, 2.9])
+	await _place(p, e, 62.0)
+	await _special(p, 5, false, [0.3, 0.6, 1.0, 1.4])
 	print("SAVED ", _shot, " capturas en ", _out)
 	tree.quit()
 

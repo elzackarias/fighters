@@ -28,6 +28,10 @@
   "p6": {
    "source": "assets/sprites/fighters/chavo/chavo_part6.png",
    "output": "assets/sprites/fighters/chavo/chavo_part6_alpha.png"
+  },
+  "p8": {
+   "source": "assets/sprites/fighters/chavo/chavo_part8.png",
+   "output": "assets/sprites/fighters/chavo/chavo_part8_alpha.png"
   }
  },
  "output_tres": "resources/fighters/chavo/chavo_frames.tres",
@@ -569,6 +573,108 @@
    ],
    "speed": 16,
    "loop": false
+  },
+  {
+   "name": "azotes",
+   "sheet": "p6",
+   "boxes": [
+    [
+     0,
+     2255,
+     1345,
+     2352
+    ],
+    [
+     40,
+     2375,
+     1250,
+     2470
+    ]
+   ],
+   "speed": 16,
+   "loop": false,
+   "frames": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20
+   ]
+  },
+  {
+   "name": "azotes_whiff",
+   "sheet": "p6",
+   "box": [
+    0,
+    2150,
+    810,
+    2250
+   ],
+   "speed": 14,
+   "loop": false
+  },
+  {
+   "name": "guard_roll",
+   "sheet": "p6",
+   "box": [
+    0,
+    1650,
+    820,
+    1765
+   ],
+   "speed": 18,
+   "loop": false
+  },
+  {
+   "name": "garrotera",
+   "sheet": "p8",
+   "boxes": [
+    [
+     0,
+     110,
+     250,
+     220
+    ],
+    [
+     400,
+     110,
+     1320,
+     220
+    ]
+   ],
+   "speed": 12,
+   "loop": false,
+   "frames": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    8,
+    11,
+    14,
+    17,
+    20,
+    23,
+    26,
+    29
+   ]
   }
  ],
  "erase_colors": [

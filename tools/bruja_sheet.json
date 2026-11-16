@@ -1,0 +1,116 @@
+{
+ "background": [
+  128,
+  128,
+  255
+ ],
+ "sheets": {
+  "p8": {
+   "source": "assets/sprites/fighters/chavo/chavo_part8.png",
+   "output": "assets/sprites/fighters/chavo/chavo_part8_alpha.png"
+  }
+ },
+ "output_tres": "resources/fighters/chavo/bruja_frames.tres",
+ "animations": [
+  {
+   "name": "appear",
+   "sheet": "p8",
+   "box": [
+    460,
+    1885,
+    1337,
+    2060
+   ],
+   "speed": 14,
+   "loop": false
+  },
+  {
+   "name": "laugh",
+   "sheet": "p8",
+   "box": [
+    0,
+    2085,
+    1337,
+    2225
+   ],
+   "speed": 12,
+   "loop": true
+  },
+  {
+   "name": "cast",
+   "sheet": "p8",
+   "boxes": [
+    [
+     0,
+     2245,
+     1270,
+     2385
+    ],
+    [
+     0,
+     2410,
+     1290,
+     2575
+    ]
+   ],
+   "speed": 14,
+   "loop": false
+  },
+  {
+   "name": "leave",
+   "sheet": "p8",
+   "box": [
+    0,
+    2580,
+    1080,
+    2725
+   ],
+   "speed": 14,
+   "loop": false
+  },
+  {
+   "name": "puff",
+   "sheet": "p8",
+   "boxes": [
+    [
+     840,
+     1540,
+     1280,
+     1690
+    ],
+    [
+     840,
+     1720,
+     1320,
+     1775
+    ]
+   ],
+   "speed": 14,
+   "loop": false
+  },
+  {
+   "name": "mula",
+   "sheet": "p8",
+   "box": [
+    0,
+    3010,
+    1300,
+    3170
+   ],
+   "speed": 10,
+   "loop": true
+  },
+  {
+   "name": "margot",
+   "sheet": "p8",
+   "box": [
+    20,
+    2890,
+    290,
+    3010
+   ],
+   "speed": 8,
+   "loop": true
+  }
+ ]
+}

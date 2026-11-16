@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/attack_data.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/fx/bruja_summon.tscn" id="2"]
+
+[resource]
+script = ExtResource("1")
+attack_name = "La Bruja del 71"
+animation = &"garrotera"
+damage = 4
+chip_damage = 2
+knockdown = true
+summon = ExtResource("2")
+startup_frames = 8
+active_frames = 1
+recovery_frames = 160
+hitstun_frames = 30
+blockstun_frames = 18
+knockback = Vector2(200, -500)
+invulnerable_frames = 60
