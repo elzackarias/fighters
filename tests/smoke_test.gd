@@ -4,6 +4,8 @@ extends Node
 
 var hits := 0
 var blocks := 0
+var projectiles := 0
+var supers := 0
 
 func _ready() -> void:
 	# Sobrevivir a los cambios de escena: colgarse de la raíz con una escena "dummy".
@@ -22,7 +24,7 @@ func _ready() -> void:
 	get_tree().node_added.connect(_on_node_added)
 	GameManager.start_new_game()
 	await get_tree().create_timer(480.0).timeout
-	print("anim_changes=", anim_changes, " hits=", hits, " blocks=", blocks, " levels_cleared=", GameManager.levels_cleared, " scene=", get_tree().current_scene.name if get_tree().current_scene else "null")
+	print("anim_changes=", anim_changes, " hits=", hits, " blocks=", blocks, " projectiles=", projectiles, " supers=", supers, " levels_cleared=", GameManager.levels_cleared, " scene=", get_tree().current_scene.name if get_tree().current_scene else "null")
 	for who in real_sprites:
 		var prefix := who + ":"
 		var keys := anims_seen.keys().filter(func(k): return k.begins_with(prefix))
@@ -49,6 +51,10 @@ func _fake_frames() -> SpriteFrames:
 	return sf
 
 func _on_node_added(n: Node) -> void:
+	if n is Projectile:
+		projectiles += 1
+	if n is Fighter:
+		n.super_started.connect(func(_f): supers += 1)
 	if n is Fighter:
 		# Solo los personajes sin sprites propios reciben los falsos.
 		var who: String = n.data.display_name

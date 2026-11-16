@@ -1,0 +1,36 @@
+## Un movimiento especial o súper: qué comando lo activa y qué ataque ejecuta.
+## Se guarda como .tres en res://resources/specials/ y se lista en FighterData.specials
+## (el orden de la lista es la prioridad: poner primero los comandos más largos).
+class_name SpecialMoveData
+extends Resource
+
+enum Context { GROUND, AIR, ANY }
+
+@export var move_name: String = "Especial"
+@export var motion: MotionInput.Motion = MotionInput.Motion.QCF
+@export var context: Context = Context.GROUND
+## Poder que consume (1 barra = Fighter.POWER_PER_BAR). 0 = especial normal.
+@export var power_cost: int = 0
+## Ataque con golpe ligero y con golpe pesado. Si falta uno, se usa el otro.
+@export var light_attack: AttackData
+@export var heavy_attack: AttackData
+
+
+func attack_for(heavy: bool) -> AttackData:
+	if heavy:
+		return heavy_attack if heavy_attack else light_attack
+	return light_attack if light_attack else heavy_attack
+
+
+func is_super() -> bool:
+	return power_cost > 0
+
+
+func fits_context(in_air: bool) -> bool:
+	match context:
+		Context.GROUND:
+			return not in_air
+		Context.AIR:
+			return in_air
+		_:
+			return true

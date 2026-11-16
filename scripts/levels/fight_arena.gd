@@ -12,6 +12,9 @@ const STAGE_INSET := 60.0
 ## entre los luchadores. Así se ven grandes sin tocar hitboxes ni velocidades.
 const CAMERA_SCREEN_MARGIN := 45.0  # distancia mínima (mundo) de un luchador al borde visible
 
+## Pantalla de súper: ambos luchadores quedan congelados y el escenario se oscurece.
+const SUPER_FREEZE_FRAMES := 30
+
 const SCORE_PER_DAMAGE := 10
 const SCORE_ROUND_WIN := 1000
 const SCORE_PER_SECOND_LEFT := 50
@@ -27,6 +30,7 @@ var time_left: float = 0.0
 var _awaiting_retry: bool = false
 var _stage_left: float
 var _stage_right: float
+var _super_dim: ColorRect
 
 @onready var _background: ColorRect = $Backdrop/Background
 @onready var _background_sprite: Sprite2D = $Backdrop/BackgroundSprite
@@ -165,6 +169,11 @@ func _spawn_fighters() -> void:
 	player.knocked_out.connect(_on_fighter_knocked_out)
 	enemy.knocked_out.connect(_on_fighter_knocked_out)
 	player.hit_landed.connect(_on_player_hit_landed)
+	player.power_changed.connect(func(cur: int, mx: int) -> void: _hud.set_power(0, cur, mx, Fighter.POWER_PER_BAR))
+	enemy.power_changed.connect(func(cur: int, mx: int) -> void: _hud.set_power(1, cur, mx, Fighter.POWER_PER_BAR))
+	player.super_started.connect(_on_super_started)
+	enemy.super_started.connect(_on_super_started)
+	_build_super_dim()
 
 
 # --- Flujo del round ---------------------------------------------------------
@@ -173,6 +182,9 @@ func _start_round() -> void:
 	phase = Phase.INTRO
 	time_left = level.round_time
 	_set_controls(false)
+	for node in _fighters_root.get_children():
+		if node is Projectile:
+			node.queue_free()  # proyectiles que quedaron volando del round anterior
 	player.reset_for_round(_player_spawn.global_position)
 	enemy.reset_for_round(_enemy_spawn.global_position)
 	_update_camera()
@@ -254,6 +266,31 @@ func _set_controls(enabled: bool) -> void:
 func _on_player_hit_landed(_target: Fighter, blocked: bool, damage: int) -> void:
 	if not blocked:
 		GameManager.add_score(damage * SCORE_PER_DAMAGE)
+
+
+func _on_super_started(_who: Fighter) -> void:
+	player.freeze(SUPER_FREEZE_FRAMES)
+	enemy.freeze(SUPER_FREEZE_FRAMES)
+	var seconds := SUPER_FREEZE_FRAMES / 60.0  # frames de juego a segundos de juego
+	_super_dim.show()
+	_super_dim.modulate.a = 1.0
+	var tw := create_tween()
+	tw.tween_interval(seconds * 0.7)
+	tw.tween_property(_super_dim, "modulate:a", 0.0, seconds * 0.3)
+	tw.tween_callback(_super_dim.hide)
+
+
+## Velo oscuro entre el escenario y los luchadores (el súper resalta sobre el fondo).
+func _build_super_dim() -> void:
+	_super_dim = ColorRect.new()
+	_super_dim.name = "SuperDim"
+	_super_dim.color = Color(0.04, 0.0, 0.08, 0.7)
+	_super_dim.position = Vector2(-5000, -5000)
+	_super_dim.size = Vector2(10000, 10000)
+	_super_dim.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_super_dim.hide()
+	add_child(_super_dim)
+	move_child(_super_dim, _fighters_root.get_index())
 
 
 ## "Pushbox" simple: evita que los luchadores se superpongan.

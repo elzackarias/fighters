@@ -25,6 +25,10 @@ enum AIState { IDLE, CHASE, ATTACK, BLOCK, RETREAT }
 @export var comfort_range: float = 70.0
 ## Probabilidad por segundo de saltar hacia el jugador mientras persigue.
 @export var jump_in_rate: float = 0.5
+## Probabilidad de usar un especial (si el personaje tiene) en lugar de un golpe normal.
+@export_range(0.0, 1.0) var special_chance: float = 0.3
+## Probabilidad de lanzar un proyectil (si tiene) en cada decisión que toma estando lejos.
+@export_range(0.0, 1.0) var zoning_chance: float = 0.35
 
 var state: AIState = AIState.IDLE
 var fighter: Fighter
@@ -85,8 +89,10 @@ func _decide(foe: Fighter, dist: float) -> void:
 	if threatened and _rng.randf() < block_chance:
 		_change_state(AIState.BLOCK, 0.45)
 	elif dist > attack_range:
-		# Lejos: perseguir (más probable cuanto más agresivo).
-		if _rng.randf() < 0.35 + aggression * 0.65:
+		# Lejos: proyectil (el ATTACK lo elige por distancia) o perseguir.
+		if dist > attack_range * 1.8 and _rng.randf() < zoning_chance and _has_special(true):
+			_change_state(AIState.ATTACK)
+		elif _rng.randf() < 0.35 + aggression * 0.65:
 			_change_state(AIState.CHASE, 1.2)
 		else:
 			_change_state(AIState.IDLE, 0.3)
@@ -143,6 +149,11 @@ func _execute(cmd: Fighter.Commands, foe: Fighter, dist: float, toward: float, d
 
 
 func _press_attack(cmd: Fighter.Commands, dist: float) -> void:
+	if dist > attack_range * 1.8:
+		_press_special(cmd, true)  # lejos: solo tiene sentido un proyectil
+		return
+	if _rng.randf() < special_chance and _press_special(cmd, false):
+		return
 	if dist > attack_range * 0.85:
 		cmd.heavy = true  # el pesado tiene más alcance
 		return
@@ -157,6 +168,36 @@ func _press_attack(cmd: Fighter.Commands, dist: float) -> void:
 	else:
 		cmd.crouch = true  # barrida
 		cmd.heavy = true
+
+
+func _has_special(projectile: bool) -> bool:
+	return _special_options(projectile).size() > 0
+
+
+## Índices de data.specials de suelo que puede pagar, proyectiles o cuerpo a cuerpo.
+func _special_options(projectile: bool) -> Array[int]:
+	var options: Array[int] = []
+	for i in fighter.data.specials.size():
+		var sp: SpecialMoveData = fighter.data.specials[i]
+		if sp == null or not sp.fits_context(false) or not fighter.can_afford(sp):
+			continue
+		var attack := sp.attack_for(false)
+		if attack and attack.is_projectile() == projectile:
+			options.append(i)
+	return options
+
+
+## Elige un especial de suelo que pueda pagar: proyectiles si está lejos, el resto de cerca.
+## Prefiere los súpers cuando tiene barra. Devuelve false si no hay ninguno adecuado.
+func _press_special(cmd: Fighter.Commands, far: bool) -> bool:
+	var options := _special_options(far)
+	var supers := options.filter(func(i: int) -> bool: return fighter.data.specials[i].is_super())
+	if options.is_empty():
+		return false
+	var pool := supers if not supers.is_empty() and _rng.randf() < 0.6 else options
+	cmd.special = pool[_rng.randi() % pool.size()]
+	cmd.special_heavy = _rng.randf() < 0.5
+	return true
 
 
 func _change_state(new_state: AIState, duration: float = 0.5) -> void:

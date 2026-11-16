@@ -9,6 +9,9 @@ const LOW_HEALTH_RATIO := 0.3
 var pause_allowed: bool = false
 
 var _lag_tweens: Array[Tween] = [null, null]
+## Barra de poder (bajo los nombres): se llena por barra y un número cuenta las guardadas.
+var _power_bars: Array[ProgressBar] = []
+var _power_labels: Array[Label] = []
 
 @onready var _names: Array[Label] = [$Root/P1Name, $Root/P2Name]
 @onready var _bars: Array[ProgressBar] = [$Root/P1Health, $Root/P2Health]
@@ -24,6 +27,7 @@ var _lag_tweens: Array[Tween] = [null, null]
 func _ready() -> void:
 	_message.hide()
 	_pause_panel.hide()
+	_build_power_bars()
 	GameManager.score_changed.connect(_on_score_changed)
 	_on_score_changed(GameManager.score)
 
@@ -53,6 +57,19 @@ func set_health(side: int, current: int, maximum: int) -> void:
 		tw.tween_interval(0.35)
 		tw.tween_property(lag, "value", float(current), 0.45).set_ease(Tween.EASE_OUT)
 		_lag_tweens[side] = tw
+
+
+## side: 0 = jugador, 1 = rival. per_bar = poder que llena una barra.
+func set_power(side: int, current: int, maximum: int, per_bar: int) -> void:
+	var bar := _power_bars[side]
+	var stocks := current / per_bar
+	var full := current >= maximum
+	bar.max_value = per_bar
+	bar.value = per_bar if full else current % per_bar
+	_power_labels[side].text = "MAX" if full else str(stocks)
+	var color := Color(1.0, 0.35, 0.2) if full else (Color(0.3, 0.85, 1.0) if stocks > 0 else Color(0.25, 0.55, 1.0))
+	(bar.get_theme_stylebox("fill") as StyleBoxFlat).bg_color = color
+	_power_labels[side].modulate = color if stocks > 0 else Color(1, 1, 1, 0.6)
 
 
 func set_time(seconds: float) -> void:
@@ -96,3 +113,38 @@ func _on_score_changed(value: int) -> void:
 
 func _pips(wins: int, needed: int) -> String:
 	return "●".repeat(wins) + "○".repeat(maxi(needed - wins, 0))
+
+
+func _build_power_bars() -> void:
+	var bg := StyleBoxFlat.new()
+	bg.bg_color = Color(0.05, 0.05, 0.12, 0.85)
+	bg.set_border_width_all(2)
+	bg.border_color = Color.WHITE
+	for side in 2:
+		var fill := StyleBoxFlat.new()  # una por lado: el color cambia según el poder
+		fill.bg_color = Color(0.25, 0.55, 1.0)
+		var bar := ProgressBar.new()
+		bar.name = "P%dPower" % (side + 1)
+		bar.show_percentage = false
+		bar.add_theme_stylebox_override("background", bg)
+		bar.add_theme_stylebox_override("fill", fill)
+		bar.size = Vector2(300, 16)
+		bar.position = Vector2(40 if side == 0 else 940, 114)
+		bar.fill_mode = ProgressBar.FILL_BEGIN_TO_END if side == 0 else ProgressBar.FILL_END_TO_BEGIN
+		bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		$Root.add_child(bar)
+		_power_bars.append(bar)
+
+		var label := Label.new()
+		label.name = "P%dPowerStock" % (side + 1)
+		label.add_theme_font_size_override("font_size", 24)
+		label.add_theme_color_override("font_outline_color", Color.BLACK)
+		label.add_theme_constant_override("outline_size", 6)
+		label.size = Vector2(64, 34)
+		label.position = Vector2(348 if side == 0 else 868, 104)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT if side == 0 else HORIZONTAL_ALIGNMENT_RIGHT
+		label.text = "0"
+		$Root.add_child(label)
+		_power_labels.append(label)
+		set_power(side, 0, 300, 100)
+
