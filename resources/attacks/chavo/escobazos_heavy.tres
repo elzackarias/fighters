@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/attack_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+attack_name = "Escobazos Giratorios (fuerte)"
+animation = &"broom_spin"
+damage = 4
+chip_damage = 1
+startup_frames = 8
+active_frames = 36
+recovery_frames = 24
+hitstun_frames = 24
+blockstun_frames = 14
+max_hits = 4
+rehit_frames = 10
+knockback = Vector2(280, -420)
+self_velocity = Vector2(210, 0)
+hitbox_offset = Vector2(60, -75)
+hitbox_size = Vector2(130, 70)

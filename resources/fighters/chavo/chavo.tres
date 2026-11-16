@@ -7,6 +7,11 @@
 [ext_resource type="Resource" path="res://resources/attacks/crouch_heavy.tres" id="5"]
 [ext_resource type="Resource" path="res://resources/attacks/air_kick.tres" id="6"]
 [ext_resource type="SpriteFrames" path="res://resources/fighters/chavo/chavo_frames.tres" id="7"]
+[ext_resource type="Script" path="res://scripts/data/special_move_data.gd" id="8"]
+[ext_resource type="Resource" path="res://resources/specials/chavo/super_cachetes.tres" id="9"]
+[ext_resource type="Resource" path="res://resources/specials/chavo/escobazos.tres" id="10"]
+[ext_resource type="Resource" path="res://resources/specials/chavo/resortera.tres" id="11"]
+[ext_resource type="Resource" path="res://resources/specials/chavo/torta.tres" id="12"]
 
 [resource]
 script = ExtResource("1")
@@ -25,3 +30,4 @@ heavy_attack = ExtResource("3")
 crouch_light_attack = ExtResource("4")
 crouch_heavy_attack = ExtResource("5")
 air_attack = ExtResource("6")
+specials = Array[ExtResource("8")]([ExtResource("9"), ExtResource("10"), ExtResource("11"), ExtResource("12")])

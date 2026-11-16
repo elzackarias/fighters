@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/attack_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/fighters/chavo/fx/torta.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+attack_name = "Torta de Jamón"
+animation = &"sandwich_air"
+damage = 7
+chip_damage = 1
+height = 2
+startup_frames = 10
+active_frames = 1
+recovery_frames = 16
+hitstun_frames = 18
+blockstun_frames = 12
+knockback = Vector2(170, 0)
+hitbox_offset = Vector2(48, -70)
+hitbox_size = Vector2(34, 22)
+projectile_texture = ExtResource("2")
+projectile_speed = 380.0
+projectile_rise = 240.0
+projectile_gravity = 300.0
+projectile_scale = 1.4
+projectile_spin = 540.0
+projectile_lifetime = 2.0

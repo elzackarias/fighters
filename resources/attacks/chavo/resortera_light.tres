@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/attack_data.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/sprites/fighters/chavo/fx/piedra.png" id="2"]
+
+[resource]
+script = ExtResource("1")
+attack_name = "Resortera"
+animation = &"slingshot"
+damage = 7
+chip_damage = 1
+startup_frames = 16
+active_frames = 1
+recovery_frames = 20
+hitstun_frames = 18
+blockstun_frames = 12
+knockback = Vector2(170, 0)
+hitbox_offset = Vector2(62, -92)
+hitbox_size = Vector2(16, 16)
+projectile_texture = ExtResource("2")
+projectile_speed = 480.0
+projectile_scale = 1.8
+projectile_lifetime = 2.0
