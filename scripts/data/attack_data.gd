@@ -76,6 +76,10 @@ enum Height { MID, LOW, OVERHEAD }
 @export var projectile_scale: float = 1.0
 ## Grados por segundo que gira (una torta que da vueltas).
 @export var projectile_spin: float = 0.0
+## Rebotes en el piso antes de desaparecer (solo con projectile_gravity > 0).
+@export var projectile_bounces: int = 0
+## Fracción de la velocidad vertical que conserva en cada rebote.
+@export_range(0.1, 1.0) var projectile_bounce_factor: float = 0.65
 ## Segundos antes de desaparecer si no golpea nada.
 @export var projectile_lifetime: float = 2.0
 

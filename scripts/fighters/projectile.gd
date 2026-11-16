@@ -9,6 +9,7 @@ var owner_fighter: Fighter
 var velocity: Vector2 = Vector2.ZERO
 
 var _life: float = 0.0
+var _bounces_left: int = 0
 var _sprite: Sprite2D
 var _done: bool = false
 
@@ -19,6 +20,7 @@ func setup(p_attack: AttackData, p_owner: Fighter, dir: int) -> void:
 	owner_fighter = p_owner
 	velocity = Vector2(attack.projectile_speed * dir, attack.projectile_rise)
 	_life = attack.projectile_lifetime
+	_bounces_left = attack.projectile_bounces
 
 	collision_layer = 1 << 2  # capa 3: hitbox
 	collision_mask = 1 << 3  # capa 4: hurtbox
@@ -45,9 +47,18 @@ func _physics_process(delta: float) -> void:
 	position += velocity * delta
 	_sprite.rotation += deg_to_rad(attack.projectile_spin) * delta * signf(velocity.x)
 	_life -= delta
-	# Desaparece al acabarse el tiempo o al tocar el suelo (si cae en arco).
-	if _life <= 0.0 or (attack.projectile_gravity > 0.0 and global_position.y >= _floor_y()):
+	if _life <= 0.0:
 		_vanish()
+		return
+	# Al tocar el piso (si cae en arco): rebota mientras le queden rebotes.
+	var floor_y := _floor_y() - attack.hitbox_size.y * 0.5
+	if attack.projectile_gravity > 0.0 and velocity.y > 0.0 and global_position.y >= floor_y:
+		if _bounces_left > 0:
+			_bounces_left -= 1
+			global_position.y = floor_y
+			velocity.y = -velocity.y * attack.projectile_bounce_factor
+		else:
+			_vanish()
 
 
 func _on_area_entered(area: Area2D) -> void:
