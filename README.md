@@ -44,8 +44,11 @@ Con el **botón de especial** basta una dirección. Los comandos clásicos tambi
 | **Súper:** ¡Ahora sí te descalabro los cachetes! | `↓` + Especial | `↓ ↘ → ↓ ↘ →` + golpe | 1 barra, invulnerable al arrancar |
 | **Súper:** Combo del Chapulín | `↙` + Especial | `↓ ↙ ← ↓ ↙ ←` + golpe | 1 barra, 5 martillazos, derriba |
 | **Súper:** Super Chipote Chillón | `↘` + Especial | `↓ ↘ → ↓ ↘ →` + golpe **pesado** | 2 barras, terremoto (bloquear agachado), derriba |
+| **Súper:** La Bruja del 71 | `↙` + Especial | `↓ ↙ ← ↓ ↙ ←` + golpe **pesado** | 2 barras. 4 rayos donde esté el rival; si entran, lo convierte en mula o en Rubia Margot y explota. Si bloquea el primero, se acaba |
+| Azotes de escobazos (agarre) | — | `→ ↘ ↓ ↙ ←` + golpe, o `←` + golpe pesado pegado al rival | 4 golpes, no se bloquea, derriba |
+| Cancelar Guardia | Especial mientras bloqueas | — | 1 barra: rodada invulnerable hacia atrás |
 
-Si no alcanza la barra, `↘` + Especial hace las trompadas y, sin barra, la Resortera. Los golpes que **derriban** dejan al rival tirado e invulnerable hasta que se levanta.
+Si no alcanza la barra, `↘` + Especial hace las trompadas y `↙` + Especial el Combo del Chapulín; sin barra, la Resortera. Los golpes que **derriban** dejan al rival tirado e invulnerable hasta que se levanta.
 
 La **barra de poder** (bajo los nombres, hasta 3 barras) se llena al pegar y al recibir golpes y se conserva entre rounds. Un golpe normal que conecta se puede **cancelar** en un especial o súper.
 

@@ -84,14 +84,16 @@ Resortera ............ Especial  (en el aire: Torta)
 Escobazos ............ adelante + Especial
 Salto de Lucha ...... atrás + Especial
 Golpazo ............... adelante + Golpe pesado, pegado al rival
+Azotes ................. atrás + Golpe pesado, pegado al rival
+Cancelar guardia (1 barra) .. Especial mientras bloqueas
 
 SÚPERS (gastan barra de poder)
 Trompadas (1) ...... abajo + Especial
 Chapulín (1) ......... abajo + atrás + Especial
 Chipote Chillón (2) . abajo + adelante + Especial
+Bruja del 71 (2) ..... abajo + atrás + Especial, con 2 barras
 
 «Adelante» es hacia el rival y «atrás», alejándote.
-Las direcciones se mantienen y luego se presiona Especial.
 Avanzado: también funcionan los comandos clásicos de círculo (lista en el README)."
 
 [node name="Buttons" type="HBoxContainer" parent="Margin/VBox"]
