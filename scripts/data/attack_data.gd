@@ -26,6 +26,15 @@ enum Height { MID, LOW, OVERHEAD }
 @export var hitstun_frames: int = 14
 @export var blockstun_frames: int = 8
 
+@export_group("Derribo y agarre")
+## El golpe final derriba: el rival sale volando, cae, queda tirado y se levanta
+## (invulnerable mientras tanto).
+@export var knockdown: bool = false
+## Agarre: no usa hitbox. Se intenta solo si el rival está a su alcance
+## (hitbox_offset.x + hitbox_size.x / 2), lo sujeta durante el startup y en el
+## primer frame activo le hace el daño. No se puede bloquear.
+@export var is_throw: bool = false
+
 @export_group("Varios golpes")
 ## Cuántas veces puede golpear durante sus frames activos.
 @export var max_hits: int = 1

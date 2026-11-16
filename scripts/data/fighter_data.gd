@@ -38,6 +38,8 @@ extends Resource
 @export var crouch_light_attack: AttackData
 @export var crouch_heavy_attack: AttackData
 @export var air_attack: AttackData
+## Agarre: adelante + golpe pesado cerca del rival. Opcional.
+@export var throw_attack: AttackData
 
 @export_group("Especiales")
 ## Especiales y súpers. El ORDEN es la prioridad cuando varios comandos coinciden:

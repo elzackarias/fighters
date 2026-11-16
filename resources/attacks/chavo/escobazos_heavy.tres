@@ -19,3 +19,4 @@ knockback = Vector2(280, -420)
 self_velocity = Vector2(210, 0)
 hitbox_offset = Vector2(60, -75)
 hitbox_size = Vector2(130, 70)
+knockdown = true

@@ -25,6 +25,8 @@ enum AIState { IDLE, CHASE, ATTACK, BLOCK, RETREAT }
 @export var comfort_range: float = 70.0
 ## Probabilidad por segundo de saltar hacia el jugador mientras persigue.
 @export var jump_in_rate: float = 0.5
+## Probabilidad de intentar un agarre (adelante + pesado) cuando está pegado al rival.
+@export_range(0.0, 1.0) var throw_chance: float = 0.25
 ## Probabilidad de usar un especial (si el personaje tiene) en lugar de un golpe normal.
 @export_range(0.0, 1.0) var special_chance: float = 0.3
 ## Probabilidad de lanzar un proyectil (si tiene) en cada decisión que toma estando lejos.
@@ -86,7 +88,10 @@ func _decide(foe: Fighter, dist: float) -> void:
 		return
 
 	var threatened := foe.is_attacking() and dist < attack_range * 1.6
-	if threatened and _rng.randf() < block_chance:
+	if foe.is_knocked_down():
+		# Tirado es invulnerable: esperar a que se levante a una distancia cómoda.
+		_change_state(AIState.IDLE if dist > comfort_range else AIState.RETREAT, 0.3)
+	elif threatened and _rng.randf() < block_chance:
 		_change_state(AIState.BLOCK, 0.45)
 	elif dist > attack_range:
 		# Lejos: proyectil (el ATTACK lo elige por distancia) o perseguir.
@@ -153,6 +158,10 @@ func _press_attack(cmd: Fighter.Commands, dist: float) -> void:
 		_press_special(cmd, true)  # lejos: solo tiene sentido un proyectil
 		return
 	if _rng.randf() < special_chance and _press_special(cmd, false):
+		return
+	if fighter.data.throw_attack and dist < comfort_range and _rng.randf() < throw_chance:
+		cmd.move_x = float(fighter.facing)  # adelante + pesado = agarre (si está a su alcance)
+		cmd.heavy = true
 		return
 	if dist > attack_range * 0.85:
 		cmd.heavy = true  # el pesado tiene más alcance

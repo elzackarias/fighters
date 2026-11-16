@@ -9,6 +9,7 @@ animation = &"crouch_heavy"
 damage = 10
 chip_damage = 1
 height = 1
+knockdown = true
 startup_frames = 8
 active_frames = 5
 recovery_frames = 20

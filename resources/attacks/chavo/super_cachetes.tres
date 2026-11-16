@@ -20,3 +20,4 @@ self_velocity = Vector2(420, 0)
 invulnerable_frames = 14
 hitbox_offset = Vector2(50, -90)
 hitbox_size = Vector2(70, 60)
+knockdown = true

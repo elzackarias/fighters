@@ -18,7 +18,9 @@ signal power_changed(current: int, maximum: int)
 ## Se emite al iniciar un súper (el árbitro congela la pelea un instante).
 signal super_started(fighter: Fighter)
 
-enum State { IDLE, WALK, CROUCH, JUMP, ATTACK, BLOCK, HITSTUN, BLOCKSTUN, KO, VICTORY }
+enum State { IDLE, WALK, CROUCH, JUMP, ATTACK, BLOCK, HITSTUN, BLOCKSTUN, KO, VICTORY, KNOCKDOWN, THROWN }
+## Fases del derribo: volando, tirado en el piso y levantándose.
+enum Knockdown { AIR, DOWN, GETUP }
 
 
 ## Comandos de un frame. "Hold" = mantener; "one-shot" = recién presionado.
@@ -64,6 +66,12 @@ const POWER_GAIN_BLOCKED := 0.6
 const POWER_GAIN_RECEIVED := 0.8
 ## Los golpes intermedios de un ataque de varios golpes empujan solo esta fracción.
 const MULTIHIT_PUSH_FACTOR := 0.25
+## Derribo: impulso hacia arriba si el ataque no trae uno, frames tirado y levantándose.
+const KNOCKDOWN_LAUNCH := -320.0
+const KNOCKDOWN_DOWN_FRAMES := 36
+const KNOCKDOWN_GETUP_FRAMES := 30
+## Seguridad: un agarrado se suelta solo si pasa esto sin que lo lancen.
+const THROWN_MAX_FRAMES := 180
 ## Animaciones opcionales y la que se usa si el personaje no la tiene dibujada.
 ## Si tampoco existe la de respaldo, se usa "idle".
 const ANIM_FALLBACKS := {
@@ -74,6 +82,8 @@ const ANIM_FALLBACKS := {
 	&"hit_low": &"hit",
 	&"hit_air": &"hit",
 	&"crouch_hit": &"hit",
+	&"knockdown": &"ko",
+	&"get_up": &"crouch",
 }
 ## Ataques cuya animación no está dibujada: se usa la más parecida (en cadena).
 ## Si no queda ninguna, se usa ATTACK_ANIM_LAST_RESORT.
@@ -134,6 +144,12 @@ var _hits_done: int = 0
 var _last_hit_frame: int = 0
 var _invulnerable_frames: int = 0
 var _projectile: Projectile  # solo un proyectil propio en pantalla a la vez
+var _buffered_from_button: bool = false
+var _knockdown_phase: Knockdown = Knockdown.AIR
+var _knockdown_frames: int = 0
+## Quien me tiene agarrado (estado THROWN) y a quién tengo agarrado yo.
+var _thrower: Fighter
+var _throw_target: Fighter
 
 @onready var _body: Node2D = $Body
 @onready var _placeholder: ColorRect = $Body/Placeholder
@@ -190,6 +206,10 @@ func _physics_process(delta: float) -> void:
 			_process_attack(delta)
 		State.HITSTUN, State.BLOCKSTUN:
 			_process_stun(delta)
+		State.KNOCKDOWN:
+			_process_knockdown(delta)
+		State.THROWN:
+			_process_thrown()
 		State.KO, State.VICTORY:
 			if is_on_floor():
 				_apply_friction(delta)
@@ -213,6 +233,8 @@ func reset_for_round(spawn_position: Vector2) -> void:
 	_buffered_specials.clear()
 	_motion.clear()
 	_invulnerable_frames = 0
+	_thrower = null
+	_throw_target = null
 	freeze_frames = 0
 	ground_y = spawn_position.y
 	_air_attack_used = false
@@ -255,6 +277,11 @@ func receive_hit(attack: AttackData, attacker: Fighter, damage: int, source_x: f
 	_play_animation(_hit_animation, true)  # reinicia aunque ya estuviera aturdido
 	if health <= 0:
 		_knock_out(push_dir)
+		return false
+
+	_thrower = null
+	if final_hit and attack.knockdown:
+		_enter_knockdown(push_dir, push)
 		return false
 
 	_stun_frames = attack.hitstun_frames
@@ -300,7 +327,21 @@ func freeze(frames: int) -> void:
 
 ## Durante el arranque de algunos especiales y súpers no se le puede golpear.
 func is_invulnerable() -> bool:
-	return _invulnerable_frames > 0
+	return _invulnerable_frames > 0 or state == State.KNOCKDOWN or state == State.THROWN
+
+
+func is_knocked_down() -> bool:
+	return state == State.KNOCKDOWN
+
+
+## Lo llama quien agarra: quedo sujeto hasta que me lance (receive_hit).
+func grab(by: Fighter) -> void:
+	_cancel_attack()
+	_thrower = by
+	_stun_frames = THROWN_MAX_FRAMES
+	velocity = Vector2.ZERO
+	_change_state(State.THROWN)
+	_play_animation(&"hit_hard", true)
 
 
 func set_victory() -> void:
@@ -328,7 +369,7 @@ func get_current_attack() -> AttackData:
 
 
 func is_stunned() -> bool:
-	return state in [State.HITSTUN, State.BLOCKSTUN, State.KO]
+	return state in [State.HITSTUN, State.BLOCKSTUN, State.KO, State.KNOCKDOWN, State.THROWN]
 
 
 func is_crouching() -> bool:
@@ -360,6 +401,7 @@ func _update_input_buffer(cmd: Commands) -> void:
 	if cmd.special >= 0 and cmd.special < data.specials.size():
 		_buffered_specials.assign([data.specials[cmd.special]])
 		_buffered_special_heavy = cmd.special_heavy
+		_buffered_from_button = true  # la IA elige el especial directamente
 		_buffered_attack = &"heavy" if cmd.special_heavy else &"light"
 		_buffer_frames = INPUT_BUFFER_FRAMES
 	elif cmd.special_button:
@@ -367,11 +409,13 @@ func _update_input_buffer(cmd: Commands) -> void:
 		_buffered_attack = &""
 		_buffer_frames = INPUT_BUFFER_FRAMES
 		_buffered_special_heavy = false
+		_buffered_from_button = true
 		_buffered_specials.assign(_button_specials(forward, cmd.crouch))
 	elif cmd.light or cmd.heavy:
 		_buffered_attack = &"heavy" if cmd.heavy else &"light"
 		_buffer_frames = INPUT_BUFFER_FRAMES
 		_buffered_special_heavy = cmd.heavy
+		_buffered_from_button = false
 		_buffered_specials.clear()
 		for sp in data.specials:
 			if sp and _motion.matches(sp.motion):
@@ -391,25 +435,30 @@ func _take_buffered_attack() -> StringName:
 	return kind
 
 
-## Especiales del botón de especial según la dirección: primero los que coinciden,
-## luego los NEUTRAL como respaldo (p. ej. ↓+especial sin barra hace la resortera).
+## Especiales del botón de especial según la dirección, en orden de preferencia:
+## la dirección exacta, luego ↓ (si era diagonal) y por último los NEUTRAL.
+## Ej.: ↘+especial sin 2 barras hace el súper de 1 barra, y sin barra la resortera.
 ## El contexto (suelo/aire) y el poder se revisan al ejecutarlos.
 func _button_specials(forward: int, down: bool) -> Array[SpecialMoveData]:
-	var wanted := SpecialMoveData.ButtonInput.NEUTRAL
+	var B := SpecialMoveData.ButtonInput
+	var chain: Array = []
 	if down:
-		wanted = SpecialMoveData.ButtonInput.DOWN
+		if forward > 0:
+			chain.append(B.DOWN_FORWARD)
+		elif forward < 0:
+			chain.append(B.DOWN_BACK)
+		chain.append(B.DOWN)
 	elif forward > 0:
-		wanted = SpecialMoveData.ButtonInput.FORWARD
-	var exact: Array[SpecialMoveData] = []
-	var neutral: Array[SpecialMoveData] = []
-	for sp in data.specials:
-		if sp == null:
-			continue
-		if sp.button_input == wanted and wanted != SpecialMoveData.ButtonInput.NEUTRAL:
-			exact.append(sp)
-		elif sp.button_input == SpecialMoveData.ButtonInput.NEUTRAL:
-			neutral.append(sp)
-	return exact + neutral
+		chain.append(B.FORWARD)
+	elif forward < 0:
+		chain.append(B.BACK)
+	chain.append(B.NEUTRAL)
+	var result: Array[SpecialMoveData] = []
+	for wanted in chain:
+		for sp in data.specials:
+			if sp and sp.button_input == wanted:
+				result.append(sp)
+	return result
 
 
 ## Primer especial del buffer que se puede hacer aquí (suelo/aire) y con el poder actual.
@@ -418,6 +467,8 @@ func _peek_buffered_special(in_air: bool) -> SpecialMoveData:
 	for sp in _buffered_specials:
 		var attack := sp.attack_for(_buffered_special_heavy)
 		if attack == null or not sp.fits_context(in_air) or not can_afford(sp):
+			continue
+		if sp.require_heavy and not _buffered_special_heavy and not _buffered_from_button:
 			continue
 		if projectile_out and attack.is_projectile():
 			continue
@@ -446,6 +497,9 @@ func _process_grounded(cmd: Commands, delta: float) -> void:
 		_start_special(special)
 		return
 	var kind := _take_buffered_attack()
+	if kind == &"heavy" and not cmd.crouch and cmd.move_x * facing > 0.1 and _can_throw(opponent):
+		_start_throw()
+		return
 	if kind != &"":
 		_start_attack(_pick_attack(kind, cmd.crouch, false), cmd.crouch)
 		return
@@ -501,8 +555,8 @@ func _process_attack(delta: float) -> void:
 		if _attack_frame > 1 and is_on_floor() and velocity.y >= 0.0:
 			_end_attack()
 			return
-	elif attack.self_velocity == Vector2.ZERO or _attack_frame > active_end:
-		_apply_friction(delta)  # los deslices conservan su impulso hasta el final del golpe
+	elif is_on_floor() and (attack.self_velocity == Vector2.ZERO or _attack_frame > active_end):
+		_apply_friction(delta)  # los deslices (y saltos) conservan su impulso hasta el final del golpe
 
 	# Cancelar un normal que conectó en un especial (o súper) presionado a tiempo.
 	if _current_special == null and _hits_done > 0 and not _attack_in_air:
@@ -511,16 +565,19 @@ func _process_attack(delta: float) -> void:
 			_start_special(special)
 			return
 
-	if _attack_frame == active_start:
+	if attack.is_throw:
+		if _attack_frame == active_start:
+			_release_throw(attack)
+	elif _attack_frame == active_start:
 		if attack.is_projectile():
 			_spawn_projectile(attack)
 		else:
 			_set_hitbox_active(true)
-	elif _attack_frame == active_end + 1:
+	elif _attack_frame == active_end + 1 and not attack.is_throw:
 		_set_hitbox_active(false)
 	# Además de la señal area_entered, se revisa la superposición cada frame activo:
 	# así un ataque de varios golpes vuelve a pegar aunque el rival no salga de la hitbox.
-	if not attack.is_projectile() and _attack_frame > active_start and _attack_frame <= active_end:
+	if not attack.is_projectile() and not attack.is_throw and _attack_frame > active_start and _attack_frame <= active_end:
 		for area in _hitbox.get_overlapping_areas():
 			_try_hit(area)
 
@@ -534,6 +591,50 @@ func _process_stun(delta: float) -> void:
 	_stun_frames -= 1
 	if _stun_frames <= 0 and is_on_floor():
 		_change_state(State.IDLE)
+
+
+func _enter_knockdown(push_dir: float, push: Vector2) -> void:
+	velocity.x = push_dir * push.x
+	velocity.y = push.y if push.y < 0.0 else KNOCKDOWN_LAUNCH
+	_knockdown_phase = Knockdown.AIR
+	_knockdown_frames = 0
+	_change_state(State.KNOCKDOWN)
+	_play_animation(&"knockdown", true)
+
+
+func _process_knockdown(delta: float) -> void:
+	_knockdown_frames += 1
+	match _knockdown_phase:
+		Knockdown.AIR:
+			# Los primeros frames todavía toca el piso (aún no se movió hacia arriba).
+			if _knockdown_frames > 2 and is_on_floor() and velocity.y >= 0.0:
+				_knockdown_phase = Knockdown.DOWN
+				_knockdown_frames = 0
+		Knockdown.DOWN:
+			_apply_friction(delta)
+			if _knockdown_frames >= KNOCKDOWN_DOWN_FRAMES:
+				_knockdown_phase = Knockdown.GETUP
+				_knockdown_frames = 0
+				_play_animation(&"get_up", true)
+		Knockdown.GETUP:
+			_apply_friction(delta)
+			if _knockdown_frames >= KNOCKDOWN_GETUP_FRAMES:
+				_change_state(State.IDLE)
+
+
+func _process_thrown() -> void:
+	velocity = Vector2.ZERO
+	_stun_frames -= 1
+	var holding := (
+		is_instance_valid(_thrower) and _thrower.state == State.ATTACK
+		and _thrower._throw_target == self and _stun_frames > 0
+	)
+	if not holding:
+		_thrower = null
+		_change_state(State.IDLE)
+		return
+	var attack := _thrower.get_current_attack()
+	global_position.x = _thrower.global_position.x + _thrower.facing * attack.hitbox_offset.x * 0.6
 
 
 func _change_state(new_state: State) -> void:
@@ -591,6 +692,34 @@ func _start_attack(attack: AttackData, crouching: bool) -> void:
 	_play_attack_animation(attack)
 
 
+## Se puede agarrar a un rival de pie (no en el aire, aturdido ni invulnerable) y cerca.
+func _can_throw(target: Fighter) -> bool:
+	var attack := data.throw_attack
+	if attack == null or target == null or not is_on_floor() or not target.is_on_floor():
+		return false
+	if not target.state in GROUNDED_STATES or target.is_invulnerable():
+		return false
+	var reach := attack.hitbox_offset.x + attack.hitbox_size.x / 2.0
+	var dx := (target.global_position.x - global_position.x) * facing
+	return dx > 0.0 and dx <= reach and absf(target.global_position.y - global_position.y) < 40.0
+
+
+func _start_throw() -> void:
+	_start_attack(data.throw_attack, false)
+	_throw_target = opponent
+	opponent.grab(self)
+
+
+func _release_throw(attack: AttackData) -> void:
+	var target := _throw_target
+	if not is_instance_valid(target) or target.state != State.THROWN:
+		return
+	_throw_target = null
+	var damage := roundi(attack.damage * data.damage_multiplier)
+	var blocked := target.receive_hit(attack, self, damage)
+	notify_hit(target, blocked, damage)
+
+
 func _spawn_projectile(attack: AttackData) -> void:
 	var p := Projectile.new()
 	p.setup(attack, self, facing)
@@ -613,6 +742,7 @@ func _cancel_attack() -> void:
 	_set_hitbox_active(false)
 	_current_attack = null
 	_current_special = null
+	_throw_target = null
 	_attack_frame = 0
 	_attack_crouching = false
 
@@ -636,7 +766,7 @@ func _on_hitbox_area_entered(area: Area2D) -> void:
 ## una vez por ataque, o hasta max_hits veces separadas por rehit_frames.
 func _try_hit(area: Area2D) -> void:
 	var attack := _current_attack
-	if state != State.ATTACK or attack == null or attack.is_projectile():
+	if state != State.ATTACK or attack == null or attack.is_projectile() or attack.is_throw:
 		return
 	var target := area.get_parent() as Fighter
 	if target == null or target == self or target.is_invulnerable():
@@ -795,6 +925,10 @@ func _animation_for_state() -> StringName:
 			return _hit_animation
 		State.KO:
 			return &"ko"
+		State.KNOCKDOWN:
+			return &"get_up" if _knockdown_phase == Knockdown.GETUP else &"knockdown"
+		State.THROWN:
+			return &"hit_hard"
 		State.VICTORY:
 			return &"victory"
 		_:

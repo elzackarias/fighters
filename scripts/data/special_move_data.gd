@@ -7,13 +7,16 @@ extends Resource
 enum Context { GROUND, AIR, ANY }
 ## Atajo con el botón de especial: qué dirección se mantiene al presionarlo.
 ## NONE = solo con el comando. NEUTRAL también es el respaldo si ninguna otra coincide.
-enum ButtonInput { NONE, NEUTRAL, FORWARD, DOWN }
+## Las diagonales usan DOWN como respaldo; todas usan NEUTRAL al final.
+enum ButtonInput { NONE, NEUTRAL, FORWARD, DOWN, BACK, DOWN_FORWARD, DOWN_BACK }
 
 @export var move_name: String = "Especial"
 @export var motion: MotionInput.Motion = MotionInput.Motion.QCF
 @export var context: Context = Context.GROUND
 ## Atajo con el botón de especial (además del comando). Usa siempre la variante ligera.
 @export var button_input: ButtonInput = ButtonInput.NONE
+## Con el comando, solo sale con golpe pesado (distingue dos súpers del mismo comando).
+@export var require_heavy: bool = false
 ## Poder que consume (1 barra = Fighter.POWER_PER_BAR). 0 = especial normal.
 @export var power_cost: int = 0
 ## Ataque con golpe ligero y con golpe pesado. Si falta uno, se usa el otro.

@@ -26,6 +26,11 @@ func _run() -> void:
 	await _test_cancel()
 	await _test_animacion_faltante()
 	await _test_boton_especial()
+	await _test_derribo()
+	await _test_golpazo()
+	await _test_salto()
+	await _test_supers_chapulin()
+	await _test_botones_fase_b()
 	print("special_moves_test: OK" if _failures == 0 else "special_moves_test: %d FALLAS" % _failures)
 	quit(1 if _failures else 0)
 
@@ -162,6 +167,112 @@ func _button(forward: int, down: bool) -> void:
 func _anim() -> StringName:
 	var attack := chavo.get_current_attack()
 	return attack.animation if attack else &""
+
+
+## El último golpe de los escobazos derriba: vuela, queda tirado (invulnerable) y se levanta.
+func _test_derribo() -> void:
+	await _setup(90.0)
+	await _dirs([[1, false, 3], [0, true, 3], [1, true, 2]])
+	chavo.commands.light = true
+	var seen_down := false
+	var seen_invulnerable := false
+	for i in 220:
+		await _step()
+		if rival.is_knocked_down():
+			seen_down = true
+			seen_invulnerable = seen_invulnerable or rival.is_invulnerable()
+		elif seen_down:
+			break
+	_check("escobazos derriba al rival", seen_down)
+	_check("tirado es invulnerable", seen_invulnerable)
+	_check("se levanta y vuelve a estar libre", rival.state == Fighter.State.IDLE)
+
+
+## → + pesado pegado al rival = Golpazo (agarre que no se bloquea y derriba).
+func _test_golpazo() -> void:
+	await _setup(62.0)
+	rival.commands.block = true  # aunque bloquee
+	chavo.commands.move_x = 1.0
+	chavo.commands.heavy = true
+	await _step()
+	chavo.commands.move_x = 0.0
+	_check("→ + pesado cerca = golpazo", _anim() == &"golpazo")
+	_check("el rival queda agarrado", rival.state == Fighter.State.THROWN)
+	await _frames(50)
+	_check("el golpazo pega aunque bloquee (vida %d)" % rival.health, rival.health == rival.data.max_health - 12)
+	_check("el golpazo derriba", rival.is_knocked_down())
+
+	await _setup(160.0)
+	chavo.commands.move_x = 1.0
+	chavo.commands.heavy = true
+	await _step()
+	chavo.commands.move_x = 0.0
+	_check("→ + pesado lejos = golpe pesado normal", _anim() == &"heavy_punch")
+
+
+## ↓↙← + golpe: salta hacia adelante, pega y cae.
+func _test_salto() -> void:
+	await _setup(130.0)
+	await _dirs([[0, true, 2], [-1, true, 2], [-1, false, 1]])
+	chavo.commands.light = true
+	await _step()
+	_check("↓↙← + golpe = salto de lucha libre", _anim() == &"wrestling_jump")
+	await _frames(12)
+	_check("el salto despega del piso", not chavo.is_on_floor())
+	await _frames(90)
+	var lost := rival.data.max_health - rival.health
+	_check("el salto pega (daño %d)" % lost, lost >= 6)
+	_check("Chavo vuelve al piso", chavo.is_on_floor())
+
+
+## ↓↘→↓↘→ + pesado con 2 barras = Super Chipote; con ligero, las trompadas.
+## ↓↙←↓↙← + golpe = Combo del Chapulín.
+func _test_supers_chapulin() -> void:
+	await _setup(150.0)
+	chavo.power = 200
+	await _double_qcf(true)
+	_check("↓↘→↓↘→ + pesado con 2 barras = super chipote", _anim() == &"super_chipote")
+	_check("el chipote gasta 2 barras (poder %d)" % chavo.power, chavo.power == 0)
+	await _frames(110)
+	var lost := rival.data.max_health - rival.health
+	_check("el chipote pega 30 (daño %d)" % lost, lost == 30)
+
+	await _setup(150.0)
+	chavo.power = 200
+	await _double_qcf(false)
+	_check("↓↘→↓↘→ + ligero = trompadas aunque haya 2 barras", _anim() == &"super_cheeks")
+
+	await _setup(100.0)
+	chavo.power = 100
+	await _dirs([[0, true, 2], [-1, true, 2], [-1, false, 2], [0, true, 2], [-1, true, 2], [-1, false, 1]])
+	chavo.commands.light = true
+	await _step()
+	_check("↓↙←↓↙← + golpe = combo del chapulín", _anim() == &"chapulin_combo")
+	await _frames(130)
+	lost = rival.data.max_health - rival.health
+	_check("el combo del chapulín pega 5 veces (daño %d)" % lost, lost == 25)
+	_check("el combo termina derribando", rival.is_knocked_down() or rival.state == Fighter.State.IDLE)
+
+
+func _test_botones_fase_b() -> void:
+	await _setup(130.0)
+	await _button(-1, false)
+	_check("← + especial = salto", _anim() == &"wrestling_jump")
+
+	await _setup(150.0)
+	chavo.power = 200
+	await _button(1, true)
+	_check("↘ + especial con 2 barras = chipote", _anim() == &"super_chipote")
+
+	await _setup(150.0)
+	chavo.power = 100
+	await _button(1, true)
+	_check("↘ + especial con 1 barra = trompadas", _anim() == &"super_cheeks")
+
+	await _setup(150.0)
+	chavo.power = 100
+	await _button(-1, true)
+	_check("↙ + especial = combo del chapulín", _anim() == &"chapulin_combo")
 
 
 # --- Utilidades --------------------------------------------------------------
