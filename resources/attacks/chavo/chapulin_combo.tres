@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/attack_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+attack_name = "Combo del Chapulín"
+animation = &"chapulin_combo"
+damage = 5
+chip_damage = 2
+knockdown = true
+startup_frames = 22
+active_frames = 66
+recovery_frames = 28
+hitstun_frames = 26
+blockstun_frames = 16
+max_hits = 5
+rehit_frames = 13
+knockback = Vector2(320, -420)
+self_velocity = Vector2(90, 0)
+invulnerable_frames = 24
+hitbox_offset = Vector2(55, -70)
+hitbox_size = Vector2(100, 90)

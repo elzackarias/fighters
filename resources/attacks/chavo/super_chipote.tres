@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/attack_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+attack_name = "Super Chipote Chillón"
+animation = &"super_chipote"
+damage = 30
+chip_damage = 6
+height = 1
+knockdown = true
+startup_frames = 54
+active_frames = 6
+recovery_frames = 34
+hitstun_frames = 40
+blockstun_frames = 20
+knockback = Vector2(220, -620)
+invulnerable_frames = 58
+hitbox_offset = Vector2(120, -30)
+hitbox_size = Vector2(260, 70)

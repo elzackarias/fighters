@@ -20,6 +20,14 @@
   "p5": {
    "source": "assets/sprites/fighters/chavo/chavo_part5.png",
    "output": "assets/sprites/fighters/chavo/chavo_part5_alpha.png"
+  },
+  "p3": {
+   "source": "assets/sprites/fighters/chavo/chavo_part3.png",
+   "output": "assets/sprites/fighters/chavo/chavo_part3_alpha.png"
+  },
+  "p6": {
+   "source": "assets/sprites/fighters/chavo/chavo_part6.png",
+   "output": "assets/sprites/fighters/chavo/chavo_part6_alpha.png"
   }
  },
  "output_tres": "resources/fighters/chavo/chavo_frames.tres",
@@ -395,6 +403,168 @@
      1595,
      750,
      1692
+    ]
+   ],
+   "speed": 16,
+   "loop": false
+  },
+  {
+   "name": "knockdown",
+   "sheet": "p3",
+   "box": [
+    40,
+    520,
+    1040,
+    650
+   ],
+   "speed": 14,
+   "loop": false
+  },
+  {
+   "name": "get_up",
+   "sheet": "p3",
+   "box": [
+    60,
+    690,
+    480,
+    760
+   ],
+   "speed": 12,
+   "loop": false
+  },
+  {
+   "name": "golpazo",
+   "sheet": "p6",
+   "box": [
+    0,
+    1540,
+    1860,
+    1632
+   ],
+   "speed": 16,
+   "loop": false
+  },
+  {
+   "name": "wrestling_jump",
+   "sheet": "p2",
+   "boxes": [
+    [
+     0,
+     2700,
+     200,
+     2820
+    ],
+    [
+     180,
+     2590,
+     1420,
+     2690
+    ],
+    [
+     1420,
+     2660,
+     1880,
+     2840
+    ],
+    [
+     0,
+     2800,
+     1600,
+     2905
+    ]
+   ],
+   "speed": 16,
+   "loop": false,
+   "frames": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    17,
+    18,
+    19,
+    20,
+    23,
+    26,
+    29,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37,
+    38
+   ]
+  },
+  {
+   "name": "super_chipote",
+   "sheet": "p1",
+   "boxes": [
+    [
+     350,
+     1830,
+     1810,
+     1950
+    ],
+    [
+     1070,
+     2200,
+     1490,
+     2300
+    ],
+    [
+     0,
+     2300,
+     1660,
+     2512
+    ]
+   ],
+   "speed": 16,
+   "loop": false
+  },
+  {
+   "name": "chapulin_combo",
+   "sheet": "p1",
+   "boxes": [
+    [
+     440,
+     2560,
+     1860,
+     2680
+    ],
+    [
+     1150,
+     2680,
+     1880,
+     2792
+    ],
+    [
+     0,
+     2910,
+     270,
+     3030
+    ],
+    [
+     760,
+     2900,
+     1850,
+     3030
+    ],
+    [
+     0,
+     3120,
+     1520,
+     3235
     ]
    ],
    "speed": 16,

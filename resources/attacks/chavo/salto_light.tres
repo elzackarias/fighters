@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="AttackData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/attack_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+attack_name = "Salto de Lucha Libre"
+animation = &"wrestling_jump"
+damage = 6
+chip_damage = 1
+height = 2
+knockdown = true
+startup_frames = 6
+active_frames = 40
+recovery_frames = 40
+hitstun_frames = 24
+blockstun_frames = 14
+max_hits = 2
+rehit_frames = 14
+knockback = Vector2(240, -360)
+self_velocity = Vector2(230, -540)
+hitbox_offset = Vector2(45, -60)
+hitbox_size = Vector2(100, 90)

@@ -12,6 +12,10 @@
 [ext_resource type="Resource" path="res://resources/specials/chavo/escobazos.tres" id="10"]
 [ext_resource type="Resource" path="res://resources/specials/chavo/resortera.tres" id="11"]
 [ext_resource type="Resource" path="res://resources/specials/chavo/torta.tres" id="12"]
+[ext_resource type="Resource" path="res://resources/specials/chavo/super_chipote.tres" id="13"]
+[ext_resource type="Resource" path="res://resources/specials/chavo/combo_chapulin.tres" id="14"]
+[ext_resource type="Resource" path="res://resources/specials/chavo/salto.tres" id="15"]
+[ext_resource type="Resource" path="res://resources/attacks/chavo/golpazo.tres" id="16"]
 
 [resource]
 script = ExtResource("1")
@@ -30,4 +34,5 @@ heavy_attack = ExtResource("3")
 crouch_light_attack = ExtResource("4")
 crouch_heavy_attack = ExtResource("5")
 air_attack = ExtResource("6")
-specials = Array[ExtResource("8")]([ExtResource("9"), ExtResource("10"), ExtResource("11"), ExtResource("12")])
+throw_attack = ExtResource("16")
+specials = Array[ExtResource("8")]([ExtResource("13"), ExtResource("9"), ExtResource("14"), ExtResource("10"), ExtResource("15"), ExtResource("11"), ExtResource("12")])
