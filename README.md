@@ -38,8 +38,14 @@ Con el **botón de especial** basta una dirección. Los comandos clásicos tambi
 |---|---|---|---|
 | Resortera | Especial | `↓ ↘ →` + golpe | Proyectil; el pesado es más rápido |
 | Torta de Jamón | Especial en el aire | `↓ ↘ →` + golpe en el aire | Proyectil en arco hacia abajo |
-| Escobazos Giratorios | `→` + Especial | `→ ↓ ↘` + golpe | 3 golpes (4 con pesado), lanza al rival |
-| **Súper:** ¡Ahora sí te descalabro los cachetes! | `↓` + Especial | `↓ ↘ → ↓ ↘ →` + golpe | Cuesta 1 barra, invulnerable al arrancar |
+| Escobazos Giratorios | `→` + Especial | `→ ↓ ↘` + golpe | 3 golpes (4 con pesado), derriba |
+| Salto de Lucha Libre | `←` + Especial | `↓ ↙ ←` + golpe | Salta y cae encima: 2 golpes (3 con pesado), derriba |
+| Golpazo (agarre) | — | `→` + golpe pesado pegado al rival | No se bloquea, derriba |
+| **Súper:** ¡Ahora sí te descalabro los cachetes! | `↓` + Especial | `↓ ↘ → ↓ ↘ →` + golpe | 1 barra, invulnerable al arrancar |
+| **Súper:** Combo del Chapulín | `↙` + Especial | `↓ ↙ ← ↓ ↙ ←` + golpe | 1 barra, 5 martillazos, derriba |
+| **Súper:** Super Chipote Chillón | `↘` + Especial | `↓ ↘ → ↓ ↘ →` + golpe **pesado** | 2 barras, terremoto (bloquear agachado), derriba |
+
+Si no alcanza la barra, `↘` + Especial hace las trompadas y, sin barra, la Resortera. Los golpes que **derriban** dejan al rival tirado e invulnerable hasta que se levanta.
 
 La **barra de poder** (bajo los nombres, hasta 3 barras) se llena al pegar y al recibir golpes y se conserva entre rounds. Un golpe normal que conecta se puede **cancelar** en un especial o súper.
 

@@ -66,7 +66,11 @@ Golpe ligero ...... J  o  Z   (botón X)
 Golpe pesado .... K  o  X   (botón Y)
 Bloquear ........... L  o  C   (RB)  — o mantén ATRÁS
 Especial ........... I  o  V   (botón B)
-Pausa ............... Esc  o  P"
+Pausa ............... Esc  o  P
+
+CONSEJOS
+• Lo BAJO se bloquea agachado; lo del AIRE, de pie.
+• La barra se llena al pegar y al recibir golpes."
 
 [node name="Right" type="Label" parent="Margin/VBox/Columns"]
 custom_minimum_size = Vector2(1, 0)
@@ -75,20 +79,19 @@ size_flags_horizontal = 3
 size_flags_vertical = 0
 theme_override_font_sizes/font_size = 18
 autowrap_mode = 3
-text = "ESPECIALES DEL CHAVO — botón ESPECIAL: I o V (mando: B)
-Resortera .............. Especial
-Escobazos .............. → + Especial
-Torta de Jamón ...... Especial en el aire
-SÚPER (1 barra) ..... ↓ + Especial
-  «¡Ahora sí te descalabro los cachetes!»
-Avanzado: ↓↘→ + golpe, →↓↘ + golpe, ↓↘→↓↘→ + golpe
-(con golpe pesado, la variante fuerte)
+text = "ESPECIALES — botón ESPECIAL: I o V (mando: B)
+Resortera ............ Especial  (en el aire: Torta)
+Escobazos ............ → + Especial
+Salto de Lucha ...... ← + Especial
+Golpazo ............... → + Golpe pesado, pegado al rival
 
-CONSEJOS
-• Los golpes BAJOS solo se bloquean agachado; los del AIRE, de pie.
-• La barra de poder se llena al pegar y al recibir golpes.
-• Un golpe normal que conecta se puede cancelar en un especial.
-• Si el tiempo se acaba, gana quien tenga más vida."
+SÚPERS (gastan barra de poder)
+Trompadas (1) ...... ↓ + Especial
+Chapulín (1) ......... ↙ + Especial
+Chipote Chillón (2) . ↘ + Especial
+
+Avanzado: ↓↘→ / →↓↘ / ↓↙← + golpe;
+súpers ↓↘→↓↘→, ↓↙←↓↙← y ↓↘→↓↘→ + pesado"
 
 [node name="Buttons" type="HBoxContainer" parent="Margin/VBox"]
 layout_mode = 2
