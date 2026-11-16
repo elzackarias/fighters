@@ -2,7 +2,7 @@
 
 Juego de peleas 2D estilo *Street Fighter* con los personajes de **El Chavo animado**, hecho en **Godot 4**. Fan game sin fines de lucro.
 
-![Chavo contra Don Ramón](docs/screenshot.png)
+![Chavo contra Don Ramón](docs/preview.png)
 
 ## Características
 
