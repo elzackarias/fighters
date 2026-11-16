@@ -50,6 +50,14 @@ Con el **botón de especial** basta una dirección. Los comandos clásicos tambi
 
 Si no alcanza la barra, `↘` + Especial hace las trompadas y `↙` + Especial el Combo del Chapulín; sin barra, la Resortera. Los golpes que **derriban** dejan al rival tirado e invulnerable hasta que se levanta.
 
+### Especiales de Quico (CPU)
+
+| Movimiento | Comando | Notas |
+|---|---|---|
+| Pelota | `↓ ↘ →` + golpe (también en el aire) | Proyectil que rebota; con pesado, pelota de playa más rápida |
+| Yo-yo | `↓ ↙ ←` + golpe (también en el aire) | 5 golpes (6 con pesado), derriba |
+| **Súper:** ¡Pelotota! | `↓ ↘ → ↓ ↘ →` + golpe | 1 barra, pelota gigante que rebota y derriba |
+
 La **barra de poder** (bajo los nombres, hasta 3 barras) se llena al pegar y al recibir golpes y se conserva entre rounds. Un golpe normal que conecta se puede **cancelar** en un especial o súper.
 
 ## Cómo ejecutarlo
