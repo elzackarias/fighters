@@ -59,9 +59,9 @@ text = "OBJETIVO
 Juegas como el Chavo. Vence a Quico en el Patio, a Don Ramón en su casa y a Ñoño en Acapulco. Gana 2 rounds para pasar al siguiente nivel.
 
 CONTROLES (teclado / mando)
-Moverse ............ A / D  o  ← / →   (stick o cruceta)
-Saltar ............... W  o  ↑   (botón A)
-Agacharse .......... S  o  ↓
+Moverse ............ A / D  o  flechas   (stick o cruceta)
+Saltar ............... W  o  flecha arriba   (botón A)
+Agacharse .......... S  o  flecha abajo
 Golpe ligero ...... J  o  Z   (botón X)
 Golpe pesado .... K  o  X   (botón Y)
 Bloquear ........... L  o  C   (RB)  — o mantén ATRÁS
@@ -81,17 +81,18 @@ theme_override_font_sizes/font_size = 18
 autowrap_mode = 3
 text = "ESPECIALES — botón ESPECIAL: I o V (mando: B)
 Resortera ............ Especial  (en el aire: Torta)
-Escobazos ............ → + Especial
-Salto de Lucha ...... ← + Especial
-Golpazo ............... → + Golpe pesado, pegado al rival
+Escobazos ............ adelante + Especial
+Salto de Lucha ...... atrás + Especial
+Golpazo ............... adelante + Golpe pesado, pegado al rival
 
 SÚPERS (gastan barra de poder)
-Trompadas (1) ...... ↓ + Especial
-Chapulín (1) ......... ↙ + Especial
-Chipote Chillón (2) . ↘ + Especial
+Trompadas (1) ...... abajo + Especial
+Chapulín (1) ......... abajo + atrás + Especial
+Chipote Chillón (2) . abajo + adelante + Especial
 
-Avanzado: ↓↘→ / →↓↘ / ↓↙← + golpe;
-súpers ↓↘→↓↘→, ↓↙←↓↙← y ↓↘→↓↘→ + pesado"
+«Adelante» es hacia el rival y «atrás», alejándote.
+Las direcciones se mantienen y luego se presiona Especial.
+Avanzado: también funcionan los comandos clásicos de círculo (lista en el README)."
 
 [node name="Buttons" type="HBoxContainer" parent="Margin/VBox"]
 layout_mode = 2
