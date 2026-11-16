@@ -183,8 +183,8 @@ func _start_round() -> void:
 	time_left = level.round_time
 	_set_controls(false)
 	for node in _fighters_root.get_children():
-		if node is Projectile:
-			node.queue_free()  # proyectiles que quedaron volando del round anterior
+		if node is Projectile or node.is_in_group(&"round_fx"):
+			node.queue_free()  # proyectiles y efectos (Bruja...) del round anterior
 	player.reset_for_round(_player_spawn.global_position)
 	enemy.reset_for_round(_enemy_spawn.global_position)
 	_update_camera()

@@ -34,9 +34,17 @@ enum Height { MID, LOW, OVERHEAD }
 ## (hitbox_offset.x + hitbox_size.x / 2), lo sujeta durante el startup y en el
 ## primer frame activo le hace el daño. No se puede bloquear.
 @export var is_throw: bool = false
+## Ataque que se hace si un agarre de comando (especial) no alcanza al rival.
+@export var whiff_attack: AttackData
+## Sin hitbox: movimientos que no pegan (rodadas, posturas).
+@export var harmless: bool = false
+## Escena que aparece en el primer frame activo en lugar de la hitbox (p. ej. la
+## Bruja del 71). Su script debe tener setup(owner: Fighter, attack: AttackData).
+@export var summon: PackedScene
 
 @export_group("Varios golpes")
-## Cuántas veces puede golpear durante sus frames activos.
+## Cuántas veces puede golpear durante sus frames activos (en un agarre: cuántos
+## golpes da mientras sujeta al rival, el último lo suelta).
 @export var max_hits: int = 1
 ## Frames entre un golpe y el siguiente (si max_hits > 1).
 @export var rehit_frames: int = 6

@@ -31,6 +31,9 @@ func _run() -> void:
 	await _test_salto()
 	await _test_supers_chapulin()
 	await _test_botones_fase_b()
+	await _test_azotes()
+	await _test_bruja()
+	await _test_cancelar_guardia()
 	print("special_moves_test: OK" if _failures == 0 else "special_moves_test: %d FALLAS" % _failures)
 	quit(1 if _failures else 0)
 
@@ -273,6 +276,118 @@ func _test_botones_fase_b() -> void:
 	chavo.power = 100
 	await _button(-1, true)
 	_check("↙ + especial = combo del chapulín", _anim() == &"chapulin_combo")
+
+
+## →↘↓↙← + golpe pegado al rival = Azotes (agarre de comando: 4 golpes, derriba).
+## Lejos, el agarre falla. Atrás + pesado pegado también hace los azotes.
+func _test_azotes() -> void:
+	await _setup(62.0)
+	rival.commands.block = true
+	await _dirs([[1, false, 2], [1, true, 2], [0, true, 2], [-1, true, 2], [-1, false, 1]])
+	chavo.commands.light = true
+	await _step()
+	_check("→↘↓↙← + golpe cerca = azotes", _anim() == &"azotes")
+	_check("los azotes agarran", rival.state == Fighter.State.THROWN)
+	await _frames(90)
+	var lost := rival.data.max_health - rival.health
+	_check("los azotes pegan 4 veces aunque bloquee (daño %d)" % lost, lost == 20)
+	_check("los azotes derriban", rival.is_knocked_down())
+
+	await _setup(170.0)
+	await _dirs([[1, false, 2], [1, true, 2], [0, true, 2], [-1, true, 2], [-1, false, 1]])
+	chavo.commands.light = true
+	await _step()
+	_check("lejos, los azotes fallan", _anim() == &"azotes_whiff")
+	await _frames(40)
+	_check("el fallo no hace daño", rival.health == rival.data.max_health)
+
+	await _setup(62.0)
+	chavo.commands.move_x = -1.0
+	chavo.commands.heavy = true
+	await _step()
+	await _step()
+	chavo.commands.move_x = 0.0
+	_check("atrás + pesado cerca = azotes", _anim() == &"azotes")
+
+
+## ↓↙←↓↙← + pesado con 2 barras = Bruja del 71: rayos, transformación y explosión.
+func _test_bruja() -> void:
+	await _setup(260.0)
+	chavo.power = 200
+	await _double_qcb(true)
+	_check("↓↙←↓↙← + pesado con 2 barras = bruja", _anim() == &"garrotera")
+	var seen_disguise := false
+	for i in 230:
+		await _step()
+		seen_disguise = seen_disguise or rival._disguise != null
+	var lost := rival.data.max_health - rival.health
+	_check("la bruja transforma al rival", seen_disguise)
+	_check("rayos + explosión hacen 30 (daño %d)" % lost, lost == 30)
+	_check("el rival vuelve a la normalidad", rival._disguise == null)
+
+	await _setup(260.0)
+	chavo.power = 200
+	rival.commands.block = true
+	await _double_qcb(true)
+	await _frames(90)
+	lost = rival.data.max_health - rival.health
+	_check("si bloquea el primer rayo, solo recibe chip (daño %d)" % lost, lost == 2)
+	_check("si lo bloquean, Chavo sale de la garrotera", chavo.state != Fighter.State.ATTACK)
+
+	await _setup(150.0)
+	chavo.power = 200
+	await _double_qcb(false)
+	_check("↓↙←↓↙← + ligero = combo del chapulín", _anim() == &"chapulin_combo")
+
+	await _setup(260.0)
+	chavo.power = 200
+	await _button(-1, true)
+	_check("↙ + especial con 2 barras = bruja", _anim() == &"garrotera")
+
+
+## Especial mientras bloquea un golpe = rodada hacia atrás (1 barra, invulnerable).
+func _test_cancelar_guardia() -> void:
+	await _setup(75.0)
+	chavo.power = 100
+	chavo.commands.block = true
+	rival.commands.heavy = true
+	var x_before := chavo.global_position.x
+	for i in 30:
+		chavo.commands.block = true
+		await _step()
+		if chavo.state == Fighter.State.BLOCKSTUN:
+			break
+	_check("Chavo bloquea el golpe", chavo.state == Fighter.State.BLOCKSTUN)
+	chavo.commands.special_button = true
+	await _step()
+	chavo.commands.block = false
+	_check("especial en guardia = rodada", _anim() == &"guard_roll")
+	_check("la rodada gasta 1 barra (poder %d)" % chavo.power, chavo.power < 100)
+	_check("la rodada es invulnerable", chavo.is_invulnerable())
+	await _frames(20)
+	_check("la rodada va hacia atrás", chavo.global_position.x < x_before - 40.0)
+
+	await _setup(75.0)
+	chavo.commands.block = true
+	rival.commands.heavy = true
+	for i in 30:
+		chavo.commands.block = true
+		await _step()
+		if chavo.state == Fighter.State.BLOCKSTUN:
+			break
+	chavo.commands.special_button = true
+	await _step()
+	_check("sin barra no hay rodada", _anim() != &"guard_roll")
+	chavo.commands.block = false
+
+
+func _double_qcb(heavy: bool) -> void:
+	await _dirs([[0, true, 2], [-1, true, 2], [-1, false, 2], [0, true, 2], [-1, true, 2], [-1, false, 1]])
+	if heavy:
+		chavo.commands.heavy = true
+	else:
+		chavo.commands.light = true
+	await _step()
 
 
 # --- Utilidades --------------------------------------------------------------

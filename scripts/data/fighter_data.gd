@@ -40,6 +40,10 @@ extends Resource
 @export var air_attack: AttackData
 ## Agarre: adelante + golpe pesado cerca del rival. Opcional.
 @export var throw_attack: AttackData
+## Agarre hacia atrás: atrás + golpe pesado cerca del rival. Opcional.
+@export var back_throw_attack: AttackData
+## Cancelar Guardia: Especial mientras bloquea un golpe (cuesta Fighter.GUARD_CANCEL_COST).
+@export var guard_cancel_attack: AttackData
 
 @export_group("Especiales")
 ## Especiales y súpers. El ORDEN es la prioridad cuando varios comandos coinciden:

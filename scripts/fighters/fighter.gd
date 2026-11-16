@@ -72,6 +72,8 @@ const KNOCKDOWN_DOWN_FRAMES := 36
 const KNOCKDOWN_GETUP_FRAMES := 30
 ## Seguridad: un agarrado se suelta solo si pasa esto sin que lo lancen.
 const THROWN_MAX_FRAMES := 180
+## Poder que cuesta Cancelar Guardia (Especial mientras bloquea).
+const GUARD_CANCEL_COST := 100
 ## Animaciones opcionales y la que se usa si el personaje no la tiene dibujada.
 ## Si tampoco existe la de respaldo, se usa "idle".
 const ANIM_FALLBACKS := {
@@ -150,6 +152,10 @@ var _knockdown_frames: int = 0
 ## Quien me tiene agarrado (estado THROWN) y a quién tengo agarrado yo.
 var _thrower: Fighter
 var _throw_target: Fighter
+## Frames que sigue valiendo un Especial presionado para Cancelar Guardia.
+var _guard_cancel_buffer: int = 0
+## Sprite que reemplaza al luchador mientras está transformado (Bruja del 71).
+var _disguise: AnimatedSprite2D
 
 @onready var _body: Node2D = $Body
 @onready var _placeholder: ColorRect = $Body/Placeholder
@@ -205,7 +211,7 @@ func _physics_process(delta: float) -> void:
 		State.ATTACK:
 			_process_attack(delta)
 		State.HITSTUN, State.BLOCKSTUN:
-			_process_stun(delta)
+			_process_stun(cmd, delta)
 		State.KNOCKDOWN:
 			_process_knockdown(delta)
 		State.THROWN:
@@ -235,6 +241,8 @@ func reset_for_round(spawn_position: Vector2) -> void:
 	_invulnerable_frames = 0
 	_thrower = null
 	_throw_target = null
+	_guard_cancel_buffer = 0
+	clear_disguise()
 	freeze_frames = 0
 	ground_y = spawn_position.y
 	_air_attack_used = false
@@ -332,6 +340,45 @@ func is_invulnerable() -> bool:
 
 func is_knocked_down() -> bool:
 	return state == State.KNOCKDOWN
+
+
+## Me deja inmóvil `frames` frames sin que nadie me agarre (efectos como la Bruja).
+func hold(frames: int) -> void:
+	if state == State.KO or state == State.VICTORY:
+		return
+	_cancel_attack()
+	_thrower = null
+	_stun_frames = frames
+	velocity.x = 0.0
+	_change_state(State.THROWN)
+
+
+## Me muestra como otro dibujo (mula, Rubia Margot...) hasta clear_disguise().
+func set_disguise(frames: SpriteFrames, anim: StringName) -> void:
+	clear_disguise()
+	_disguise = AnimatedSprite2D.new()
+	_disguise.sprite_frames = frames
+	_disguise.play(anim)
+	var tex := frames.get_frame_texture(anim, 0)
+	_disguise.offset = Vector2(0.0, -tex.get_height() / 2.0)  # pies en el origen
+	_disguise.scale = Vector2.ONE * data.sprite_scale
+	_body.add_child(_disguise)
+	_sprite.visible = false
+	_placeholder.visible = false
+
+
+func clear_disguise() -> void:
+	if _disguise:
+		_disguise.queue_free()
+		_disguise = null
+		_sprite.visible = data.sprite_frames != null
+		_placeholder.visible = data.sprite_frames == null
+
+
+## Termina ya el ataque en curso (p. ej. si el hechizo de la Bruja fue bloqueado).
+func cut_attack_short() -> void:
+	if state == State.ATTACK:
+		_end_attack()
 
 
 ## Lo llama quien agarra: quedo sujeto hasta que me lance (receive_hit).
@@ -497,9 +544,11 @@ func _process_grounded(cmd: Commands, delta: float) -> void:
 		_start_special(special)
 		return
 	var kind := _take_buffered_attack()
-	if kind == &"heavy" and not cmd.crouch and cmd.move_x * facing > 0.1 and _can_throw(opponent):
-		_start_throw()
-		return
+	if kind == &"heavy" and not cmd.crouch and absf(cmd.move_x) > 0.1:
+		var throw := data.throw_attack if cmd.move_x * facing > 0.0 else data.back_throw_attack
+		if _can_throw(opponent, throw):
+			_start_throw(throw)
+			return
 	if kind != &"":
 		_start_attack(_pick_attack(kind, cmd.crouch, false), cmd.crouch)
 		return
@@ -559,25 +608,32 @@ func _process_attack(delta: float) -> void:
 		_apply_friction(delta)  # los deslices (y saltos) conservan su impulso hasta el final del golpe
 
 	# Cancelar un normal que conectó en un especial (o súper) presionado a tiempo.
-	if _current_special == null and _hits_done > 0 and not _attack_in_air:
+	if _current_special == null and _hits_done > 0 and not _attack_in_air and not attack.is_throw:
 		var special := _peek_buffered_special(false)
 		if special:
 			_start_special(special)
 			return
 
+	var uses_hitbox := not (attack.is_throw or attack.harmless or attack.is_projectile() or attack.summon)
 	if attack.is_throw:
-		if _attack_frame == active_start:
-			_release_throw(attack)
+		# Un golpe al empezar los activos y luego cada rehit_frames hasta max_hits.
+		var due := _attack_frame == active_start or (
+			_hits_done > 0 and _attack_frame - _last_hit_frame >= attack.rehit_frames
+		)
+		if due and _attack_frame <= active_end and _hits_done < attack.max_hits:
+			_throw_hit(attack)
 	elif _attack_frame == active_start:
 		if attack.is_projectile():
 			_spawn_projectile(attack)
-		else:
+		elif attack.summon:
+			_spawn_summon(attack)
+		elif uses_hitbox:
 			_set_hitbox_active(true)
-	elif _attack_frame == active_end + 1 and not attack.is_throw:
+	elif _attack_frame == active_end + 1 and uses_hitbox:
 		_set_hitbox_active(false)
 	# Además de la señal area_entered, se revisa la superposición cada frame activo:
 	# así un ataque de varios golpes vuelve a pegar aunque el rival no salga de la hitbox.
-	if not attack.is_projectile() and not attack.is_throw and _attack_frame > active_start and _attack_frame <= active_end:
+	if uses_hitbox and _attack_frame > active_start and _attack_frame <= active_end:
 		for area in _hitbox.get_overlapping_areas():
 			_try_hit(area)
 
@@ -585,7 +641,14 @@ func _process_attack(delta: float) -> void:
 		_end_attack()
 
 
-func _process_stun(delta: float) -> void:
+func _process_stun(cmd: Commands, delta: float) -> void:
+	if cmd.special_button:
+		_guard_cancel_buffer = INPUT_BUFFER_FRAMES
+	elif _guard_cancel_buffer > 0:
+		_guard_cancel_buffer -= 1
+	if state == State.BLOCKSTUN and _guard_cancel_buffer > 0 and _can_guard_cancel():
+		_guard_cancel()
+		return
 	if is_on_floor():
 		_apply_friction(delta)
 	_stun_frames -= 1
@@ -625,6 +688,10 @@ func _process_knockdown(delta: float) -> void:
 func _process_thrown() -> void:
 	velocity = Vector2.ZERO
 	_stun_frames -= 1
+	if _thrower == null:  # inmovilizado por un efecto (hold)
+		if _stun_frames <= 0:
+			_change_state(State.IDLE)
+		return
 	var holding := (
 		is_instance_valid(_thrower) and _thrower.state == State.ATTACK
 		and _thrower._throw_target == self and _stun_frames > 0
@@ -661,7 +728,14 @@ func _start_special(special: SpecialMoveData) -> void:
 	if special.power_cost > 0:
 		power -= special.power_cost
 		power_changed.emit(power, max_power())
-	_start_attack(attack, false)
+	if attack.is_throw:
+		# Agarre de comando: si no alcanza, hace el intento fallido (whiff_attack).
+		if _can_throw(opponent, attack):
+			_start_throw(attack)
+		else:
+			_start_attack(attack.whiff_attack, false)
+	else:
+		_start_attack(attack, false)
 	_current_special = special
 	if special.is_super():
 		super_started.emit(self)
@@ -693,8 +767,7 @@ func _start_attack(attack: AttackData, crouching: bool) -> void:
 
 
 ## Se puede agarrar a un rival de pie (no en el aire, aturdido ni invulnerable) y cerca.
-func _can_throw(target: Fighter) -> bool:
-	var attack := data.throw_attack
+func _can_throw(target: Fighter, attack: AttackData) -> bool:
 	if attack == null or target == null or not is_on_floor() or not target.is_on_floor():
 		return false
 	if not target.state in GROUNDED_STATES or target.is_invulnerable():
@@ -704,20 +777,49 @@ func _can_throw(target: Fighter) -> bool:
 	return dx > 0.0 and dx <= reach and absf(target.global_position.y - global_position.y) < 40.0
 
 
-func _start_throw() -> void:
-	_start_attack(data.throw_attack, false)
+func _start_throw(attack: AttackData) -> void:
+	_start_attack(attack, false)
 	_throw_target = opponent
 	opponent.grab(self)
 
 
-func _release_throw(attack: AttackData) -> void:
+## Un golpe del agarre. Los intermedios lo vuelven a sujetar; el último lo suelta.
+func _throw_hit(attack: AttackData) -> void:
 	var target := _throw_target
 	if not is_instance_valid(target) or target.state != State.THROWN:
 		return
-	_throw_target = null
+	_hits_done += 1
+	_last_hit_frame = _attack_frame
+	var final_hit := _hits_done >= attack.max_hits
 	var damage := roundi(attack.damage * data.damage_multiplier)
-	var blocked := target.receive_hit(attack, self, damage)
+	var blocked := target.receive_hit(attack, self, damage, NAN, final_hit)
 	notify_hit(target, blocked, damage)
+	if final_hit or target.health <= 0:
+		_throw_target = null
+	else:
+		target.grab(self)
+
+
+func _can_guard_cancel() -> bool:
+	return data.guard_cancel_attack != null and power >= GUARD_CANCEL_COST
+
+
+## Cancelar Guardia: gasta poder y sale de la guardia con una rodada invulnerable.
+func _guard_cancel() -> void:
+	_guard_cancel_buffer = 0
+	_take_buffered_attack()  # que el Especial no salga además al terminar
+	power -= GUARD_CANCEL_COST
+	power_changed.emit(power, max_power())
+	_stun_frames = 0
+	_start_attack(data.guard_cancel_attack, false)
+
+
+func _spawn_summon(attack: AttackData) -> void:
+	var fx := attack.summon.instantiate()
+	fx.add_to_group(&"round_fx")
+	get_parent().add_child(fx)
+	get_parent().move_child(fx, 0)  # detrás de los luchadores
+	fx.setup(self, attack)
 
 
 func _spawn_projectile(attack: AttackData) -> void:

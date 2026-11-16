@@ -139,6 +139,13 @@ func _execute(cmd: Fighter.Commands, foe: Fighter, dist: float, toward: float, d
 
 		AIState.BLOCK:
 			cmd.block = true
+			# A veces sale de la guardia con Cancelar Guardia (si tiene barra).
+			if (
+				fighter.state == Fighter.State.BLOCKSTUN
+				and fighter.power >= Fighter.GUARD_CANCEL_COST
+				and fighter.data.guard_cancel_attack and _rng.randf() < 0.02
+			):
+				cmd.special_button = true
 			var incoming := foe.get_current_attack()
 			cmd.crouch = incoming != null and incoming.height == AttackData.Height.LOW
 			if _state_timer <= 0.0:
