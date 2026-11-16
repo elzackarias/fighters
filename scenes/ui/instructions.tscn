@@ -43,13 +43,20 @@ theme_override_font_sizes/font_size = 52
 text = "¿Cómo se juega?"
 horizontal_alignment = 1
 
-[node name="Body" type="Label" parent="Margin/VBox"]
+[node name="Columns" type="HBoxContainer" parent="Margin/VBox"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 24
+theme_override_constants/separation = 50
+
+[node name="Left" type="Label" parent="Margin/VBox/Columns"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 18
+autowrap_mode = 3
 text = "OBJETIVO
-Juegas como el Chavo. Vence a Quico en el Patio, a Don Ramón en su casa
-y a Ñoño en Acapulco. Gana 2 rounds para pasar al siguiente nivel.
+Juegas como el Chavo. Vence a Quico en el Patio, a Don Ramón en su casa y a Ñoño en Acapulco. Gana 2 rounds para pasar al siguiente nivel.
 
 CONTROLES (teclado / mando)
 Moverse ............ A / D  o  ← / →   (stick o cruceta)
@@ -58,10 +65,27 @@ Agacharse .......... S  o  ↓
 Golpe ligero ...... J  o  Z   (botón X)
 Golpe pesado .... K  o  X   (botón Y)
 Bloquear ........... L  o  C   (RB)  — o mantén ATRÁS
-Pausa ............... Esc  o  P
+Pausa ............... Esc  o  P"
+
+[node name="Right" type="Label" parent="Margin/VBox/Columns"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 18
+autowrap_mode = 3
+text = "ESPECIALES DEL CHAVO
+(mirando a la derecha; golpe ligero o pesado)
+Resortera ................ ↓ ↘ → + golpe
+Torta de Jamón ........ ↓ ↘ → + golpe en el aire
+Escobazos ............... → ↓ ↘ + golpe
+SÚPER (1 barra) ...... ↓ ↘ → ↓ ↘ → + golpe
+  «¡Ahora sí te descalabro los cachetes!»
 
 CONSEJOS
-• Los golpes BAJOS solo se bloquean agachado; las patadas en el AIRE, de pie.
+• Los golpes BAJOS solo se bloquean agachado; los del AIRE, de pie.
+• La barra de poder se llena al pegar y al recibir golpes.
+• Un golpe normal que conecta se puede cancelar en un especial.
 • Si el tiempo se acaba, gana quien tenga más vida."
 
 [node name="Buttons" type="HBoxContainer" parent="Margin/VBox"]

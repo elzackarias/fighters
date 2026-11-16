@@ -12,7 +12,8 @@ Juego de peleas 2D estilo *Street Fighter* con los personajes de **El Chavo anim
 - **Animaciones por contexto**: caminar hacia adelante y atrás, subida y caída del salto, bloqueo de pie y agachado, reacción según el golpe (alto, fuerte, bajo, aéreo, agachado), KO y pose de victoria.
 - **Cámara estilo SF**: zoom que sigue a ambos luchadores, con un escenario más ancho que la pantalla y personajes de casi la mitad de su altura.
 - **Estaturas reales**: cada personaje tiene su propia altura y hurtbox (Don Ramón es más grande que los niños).
-- **Datos editables sin código**: personajes, ataques y niveles son recursos `.tres`.
+- **Especiales y súpers con comandos** (`↓↘→`, `→↓↘`, `↓↘→↓↘→`...), barra de poder de 3 niveles, proyectiles, ataques de varios golpes y cancelaciones.
+- **Datos editables sin código**: personajes, ataques, especiales y niveles son recursos `.tres`.
 
 ## Controles
 
@@ -27,6 +28,19 @@ Juego de peleas 2D estilo *Street Fighter* con los personajes de **El Chavo anim
 | Pausa | `Esc` o `P` | — |
 
 Agachado + golpe = ataque bajo. En el aire + golpe = ataque aéreo. Los ataques **bajos** solo se bloquean agachado.
+
+### Especiales del Chavo
+
+Comandos escritos mirando a la derecha (si mira a la izquierda, se invierten). Golpe ligero o pesado cambia la variante.
+
+| Movimiento | Comando | Notas |
+|---|---|---|
+| Resortera | `↓ ↘ →` + golpe | Proyectil; el pesado es más rápido |
+| Torta de Jamón | `↓ ↘ →` + golpe en el aire | Proyectil en arco hacia abajo |
+| Escobazos Giratorios | `→ ↓ ↘` + golpe | 3 golpes (4 con pesado), lanza al rival |
+| **Súper:** ¡Ahora sí te descalabro los cachetes! | `↓ ↘ → ↓ ↘ →` + golpe | Cuesta 1 barra, invulnerable al arrancar |
+
+La **barra de poder** (bajo los nombres, hasta 3 barras) se llena al pegar y al recibir golpes y se conserva entre rounds. Un golpe normal que conecta se puede **cancelar** en un especial o súper.
 
 ## Cómo ejecutarlo
 
@@ -44,7 +58,8 @@ assets/sprites/fighters/<id>/   Hojas de sprites originales y su versión sin fo
 resources/
   fighters/<id>/<id>.tres         FighterData: stats, estatura, escala del sprite, ataques
   fighters/<id>/<id>_frames.tres  SpriteFrames con todas las animaciones del personaje
-  attacks/                        AttackData: daño, frames, hitbox, empuje
+  attacks/                        AttackData: daño, frames, hitbox, empuje, varios golpes, proyectil
+  specials/<id>/                  SpecialMoveData: comando, costo de poder y ataque de cada especial
   levels/                         LevelData: rival, colores, tiempo, dificultad de la IA
 scenes/                           Luchador genérico, arena y pantallas de UI
 scripts/
@@ -73,6 +88,8 @@ python3 tools/slice_sheet.py tools/chavo_sheet.json --preview /tmp  # + imagen c
 
 Cada `tools/<id>_sheet.json` define, por animación, en qué hoja y caja está, qué frames usar (`frames`), la velocidad (`speed`) y si hace loop (`loop`). Opciones extra: `boxes` (varias franjas), `anchor: "feet"` (anclar por los pies) y `erase_colors` (borrar líneas guía de un color).
 
+Las animaciones de especiales (`slingshot`, `sandwich_air`, `broom_spin`, `super_cheeks`...) se nombran libremente: cada `AttackData` indica la suya en `animation`.
+
 **Animaciones que reconoce el juego**: `idle`, `walk`, `walk_back`, `jump`, `fall`, `crouch`, `block`, `crouch_block`, `hit`, `hit_hard`, `hit_low`, `hit_air`, `crouch_hit`, `ko`, `victory`, `light_punch`, `heavy_punch`, `crouch_light`, `crouch_heavy` y `air_kick`. Si falta alguna, se usa una de respaldo (por ejemplo `walk_back` → `walk` → `idle`). Si un ataque no tiene animación, se muestra un rectángulo provisional.
 
 ## Pruebas
@@ -81,8 +98,15 @@ Cada `tools/<id>_sheet.json` define, por animación, en qué hoja y caja está, 
 # Partida completa CPU vs CPU (sin ventana): reporta golpes, bloqueos y animaciones usadas
 godot --headless --path . res://tests/smoke_test.tscn
 
+# Detector de comandos (↓↘→, →↓↘...) y especiales con dos luchadores reales
+godot --headless --path . -s res://tests/motion_input_test.gd
+godot --headless --path . -s res://tests/special_moves_test.gd
+
 # Captura de la arena de un nivel (0-2)
 godot --path . res://tests/screenshot.tscn -- 1 captura.png
+
+# Fotogramas de cada especial de Chavo en la arena
+godot --path . res://tests/special_capture.tscn -- /tmp/capturas
 ```
 
 ## Estado y próximos pasos
