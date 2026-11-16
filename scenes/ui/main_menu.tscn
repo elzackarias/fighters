@@ -19,7 +19,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.20723939, 0.7725758, 0.883712, 1)
+color = Color(0, 0, 0, 1)
 
 [node name="Center" type="CenterContainer" parent="." unique_id=1028561853]
 layout_mode = 1
@@ -39,12 +39,6 @@ theme_override_colors/font_outline_color = Color(0.25, 0.12, 0.05, 1)
 theme_override_constants/outline_size = 14
 theme_override_font_sizes/font_size = 72
 text = "Water Fighters"
-horizontal_alignment = 1
-
-[node name="Subtitle" type="Label" parent="Center/VBox" unique_id=1934311378]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Pi Pi Pi Pi Pi Pi Pi Pi Pi Pi Pi Pi"
 horizontal_alignment = 1
 
 [node name="Spacer" type="Control" parent="Center/VBox" unique_id=3100948]
@@ -71,3 +65,13 @@ layout_mode = 2
 size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 28
 text = "Salir"
+
+[node name="Spacer2" type="Control" parent="Center/VBox" unique_id=985755994]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+
+[node name="Copyright" type="Label" parent="Center/VBox" unique_id=622800311]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Fan game sin fines de lucro · 2026"
+horizontal_alignment = 1
