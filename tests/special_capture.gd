@@ -51,6 +51,17 @@ func _ready() -> void:
 	await _special(p, 2, false, [0.3, 0.9, 1.2, 1.6, 2.2, 2.9])
 	await _place(p, e, 62.0)
 	await _special(p, 5, false, [0.3, 0.6, 1.0, 1.4])
+	# Especiales de Quico (rival): se apaga su IA y se le dan comandos directos.
+	# índices en quico.tres: 0 pelotota, 1 yo-yo, 2 yo-yo aéreo, 3 pelota, 4 pelota aérea
+	e.get_node("AIController").set_physics_process(false)
+	e.controls_enabled = true
+	await _place(p, e, 420.0)
+	await _special(e, 3, false, [0.25, 0.5, 0.8, 1.1])
+	await _place(p, e, 110.0)
+	await _special(e, 1, false, [0.3, 0.55, 0.85, 1.2])
+	await _place(p, e, 300.0)
+	e.power = 300
+	await _special(e, 0, false, [0.6, 0.8, 1.1, 1.5])
 	print("SAVED ", _shot, " capturas en ", _out)
 	tree.quit()
 

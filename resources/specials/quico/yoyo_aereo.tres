@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SpecialMoveData" format=3]
+
+[ext_resource type="Script" path="res://scripts/data/special_move_data.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/attacks/quico/yoyo_aereo.tres" id="2"]
+
+
+[resource]
+script = ExtResource("1")
+move_name = "Yo-yo aéreo"
+motion = 2
+context = 1
+button_input = 2
+power_cost = 0
+light_attack = ExtResource("2")
+

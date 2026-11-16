@@ -34,6 +34,7 @@ func _run() -> void:
 	await _test_azotes()
 	await _test_bruja()
 	await _test_cancelar_guardia()
+	await _test_quico()
 	print("special_moves_test: OK" if _failures == 0 else "special_moves_test: %d FALLAS" % _failures)
 	quit(1 if _failures else 0)
 
@@ -148,8 +149,9 @@ func _test_boton_especial() -> void:
 	await _button(1, false)
 	_check("especial en el aire = torta (con cualquier dirección)", _anim() == &"sandwich_air")
 
-	# Quico no tiene especiales: el botón no debe sacar un golpe normal.
+	# Don Ramón no tiene especiales: el botón no debe sacar un golpe normal.
 	await _setup(260.0)
+	rival.data = DON_RAMON
 	rival.commands.special_button = true
 	await _frames(2)
 	_check("sin especiales, el botón no hace un golpe normal", rival.get_current_attack() == null)
@@ -388,6 +390,68 @@ func _double_qcb(heavy: bool) -> void:
 	else:
 		chavo.commands.light = true
 	await _step()
+
+
+## Especiales de Quico (los usa la IA con commands.special).
+## Índices en quico.tres: 0 pelotota, 1 yo-yo, 2 yo-yo aéreo, 3 pelota, 4 pelota aérea.
+func _test_quico() -> void:
+	await _setup(480.0)
+	rival.commands.special = 3
+	await _step()
+	_check("quico: pelota", _rival_anim() == &"ball_1")
+	var bounced := false
+	var last_vy := 0.0
+	for i in 200:
+		await _step()
+		for n in _world.get_children():
+			if n is Projectile:
+				if last_vy > 0.0 and n.velocity.y < 0.0:
+					bounced = true
+				last_vy = n.velocity.y
+	_check("la pelota rebota", bounced)
+	_check("la pelota pega a Chavo (vida %d)" % chavo.health, chavo.health == chavo.data.max_health - _q(6))
+
+	await _setup(100.0)
+	rival.commands.special = 1
+	await _step()
+	_check("quico: yo-yo", _rival_anim() == &"yoyo")
+	await _frames(90)
+	var lost := chavo.data.max_health - chavo.health
+	_check("el yo-yo pega 5 veces (daño %d)" % lost, lost == 5 * _q(3))
+
+	await _setup(260.0)
+	rival.power = 100
+	rival.commands.special = 0
+	await _step()
+	_check("quico: pelotota (súper)", _rival_anim() == &"ball_3")
+	_check("la pelotota gasta 1 barra", rival.power == 0)
+	var seen_down := false
+	for i in 160:
+		await _step()
+		seen_down = seen_down or chavo.is_knocked_down()
+	lost = chavo.data.max_health - chavo.health
+	_check("la pelotota pega 22 y derriba (daño %d)" % lost, lost == _q(22) and seen_down)
+
+	# Quico derribado usa su propia animación de levantarse.
+	await _setup(90.0)
+	await _dirs([[1, false, 3], [0, true, 3], [1, true, 2]])
+	chavo.commands.light = true
+	var seen_getup := false
+	var sprite: AnimatedSprite2D = rival.get_node("Body/Sprite")
+	for i in 220:
+		await _step()
+		seen_getup = seen_getup or sprite.animation == &"get_up"
+	_check("quico se levanta con su animación get_up", seen_getup)
+
+
+## Daño de Quico con su multiplicador.
+func _q(damage: int) -> int:
+	return roundi(damage * QUICO.damage_multiplier)
+
+
+func _rival_anim() -> StringName:
+	var attack := rival.get_current_attack()
+	return attack.animation if attack else &""
 
 
 # --- Utilidades --------------------------------------------------------------
