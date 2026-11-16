@@ -73,6 +73,15 @@ const ANIM_FALLBACKS := {
 	&"hit_air": &"hit",
 	&"crouch_hit": &"hit",
 }
+## Ataques cuya animación no está dibujada: se usa la más parecida (en cadena).
+## Si no queda ninguna, se usa ATTACK_ANIM_LAST_RESORT.
+const ATTACK_ANIM_FALLBACKS := {
+	&"crouch_heavy": &"crouch_light",
+	&"crouch_light": &"crouch",
+	&"air_kick": &"fall",
+	&"fall": &"jump",
+}
+const ATTACK_ANIM_LAST_RESORT := &"heavy_punch"
 ## Golpes con este hitstun o más usan la animación de golpe fuerte.
 const HARD_HIT_STUN_FRAMES := 20
 ## Altura para la que están diseñadas las formas de fighter.tscn (cuerpo y hurtbox).
@@ -111,7 +120,6 @@ var _buffer_frames: int = 0
 var _flash_time: float = 0.0
 var _stand_hurt_size: Vector2
 var _stand_hurt_pos: Vector2
-var _attack_has_animation: bool = false
 var _hit_animation: StringName = &"hit"
 var _motion := MotionInput.new()
 ## Especiales cuyo comando se completó al presionar el golpe (en orden de prioridad).
@@ -581,8 +589,8 @@ func _cancel_attack() -> void:
 func _set_hitbox_active(active: bool) -> void:
 	# set_deferred: no se pueden cambiar formas de colisión en medio de un paso de física.
 	_hitbox_shape.set_deferred("disabled", not active)
-	# El rectángulo solo se ve si no hay animación que represente el golpe (o en debug).
-	_attack_visual.visible = active and (show_hitboxes or not _attack_has_animation)
+	# El rectángulo solo se ve en luchadores sin sprites (placeholder) o en debug.
+	_attack_visual.visible = active and (show_hitboxes or not _sprite.visible)
 	if active:
 		var size := _current_attack.hitbox_size
 		_attack_visual.size = size
@@ -814,14 +822,12 @@ func _play_animation(anim: StringName, restart: bool = false) -> void:
 ## lo mismo que el ataque (startup + activos + recuperación). Así el artista dibuja
 ## los frames que quiera y la lógica de combate (AttackData) sigue mandando.
 func _play_attack_animation(attack: AttackData) -> void:
-	_attack_has_animation = false
 	if not _sprite.visible or _sprite.sprite_frames == null:
 		return
 	var frames := _sprite.sprite_frames
-	var anim := attack.animation
-	if not frames.has_animation(anim):
+	var anim := _resolve_attack_animation(attack.animation)
+	if anim == &"":
 		return
-	_attack_has_animation = true
 	var fps := frames.get_animation_speed(anim)
 	var anim_seconds := 0.0
 	for i in frames.get_frame_count(anim):
@@ -830,3 +836,15 @@ func _play_attack_animation(attack: AttackData) -> void:
 	_sprite.stop()
 	_sprite.play(anim)
 	_sprite.speed_scale = anim_seconds / attack_seconds if attack_seconds > 0.0 else 1.0
+
+
+## La animación del ataque, o la más parecida que sí esté dibujada ("" si ninguna).
+func _resolve_attack_animation(anim: StringName) -> StringName:
+	var frames := _sprite.sprite_frames
+	var seen := {}
+	while anim != &"" and not seen.has(anim):
+		if frames.has_animation(anim):
+			return anim
+		seen[anim] = true
+		anim = ATTACK_ANIM_FALLBACKS.get(anim, &"")
+	return ATTACK_ANIM_LAST_RESORT if frames.has_animation(ATTACK_ANIM_LAST_RESORT) else &""

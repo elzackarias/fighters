@@ -5,6 +5,7 @@ extends SceneTree
 const FIGHTER_SCENE := preload("res://scenes/fighters/fighter.tscn")
 const CHAVO := preload("res://resources/fighters/chavo/chavo.tres")
 const QUICO := preload("res://resources/fighters/quico/quico.tres")
+const DON_RAMON := preload("res://resources/fighters/don_ramon/don_ramon.tres")
 
 var _failures := 0
 var _world: Node2D
@@ -23,6 +24,7 @@ func _run() -> void:
 	await _test_super_sin_poder()
 	await _test_torta_aerea()
 	await _test_cancel()
+	await _test_animacion_faltante()
 	print("special_moves_test: OK" if _failures == 0 else "special_moves_test: %d FALLAS" % _failures)
 	quit(1 if _failures else 0)
 
@@ -94,6 +96,21 @@ func _test_cancel() -> void:
 	await _frames(2)
 	var attack := chavo.get_current_attack()
 	_check("golpe ligero se cancela en resortera", attack != null and attack.animation == &"slingshot")
+
+
+## Don Ramón no tiene animación de patada baja: debe agacharse, sin rectángulo amarillo.
+func _test_animacion_faltante() -> void:
+	await _setup(200.0)
+	rival.data = DON_RAMON
+	var sprite: AnimatedSprite2D = rival.get_node("Body/Sprite")
+	sprite.sprite_frames = DON_RAMON.sprite_frames
+	rival.commands.crouch = true
+	rival.commands.light = true
+	await _frames(6)  # ya en frames activos
+	var visual: ColorRect = rival.get_node("AttackVisual")
+	_check("ataque sin animación usa la de respaldo (%s)" % sprite.animation, sprite.animation == &"crouch")
+	_check("sin rectángulo amarillo si hay sprites", not visual.visible)
+	rival.commands.crouch = false
 
 
 # --- Utilidades --------------------------------------------------------------
