@@ -29,6 +29,7 @@ class Commands:
 	var jump: bool = false  # one-shot
 	var light: bool = false  # one-shot
 	var heavy: bool = false  # one-shot
+	var special_button: bool = false  # one-shot: botón de especial (atajo sin comando)
 	## one-shot: índice en data.specials que se ejecuta sin teclear el comando
 	## (lo usa la IA). -1 = ninguno. special_heavy elige la variante pesada.
 	var special: int = -1
@@ -41,6 +42,7 @@ class Commands:
 		jump = false
 		light = false
 		heavy = false
+		special_button = false
 		special = -1
 		special_heavy = false
 
@@ -343,6 +345,7 @@ func _read_player_input() -> void:
 	commands.jump = Input.is_action_just_pressed(p + "up")
 	commands.light = Input.is_action_just_pressed(p + "light")
 	commands.heavy = Input.is_action_just_pressed(p + "heavy")
+	commands.special_button = Input.is_action_just_pressed(p + "special")
 
 
 ## Guarda el último golpe presionado unos frames para que no se "pierda"
@@ -359,6 +362,12 @@ func _update_input_buffer(cmd: Commands) -> void:
 		_buffered_special_heavy = cmd.special_heavy
 		_buffered_attack = &"heavy" if cmd.special_heavy else &"light"
 		_buffer_frames = INPUT_BUFFER_FRAMES
+	elif cmd.special_button:
+		# Atajo: la dirección elige el especial; nunca hace un golpe normal.
+		_buffered_attack = &""
+		_buffer_frames = INPUT_BUFFER_FRAMES
+		_buffered_special_heavy = false
+		_buffered_specials.assign(_button_specials(forward, cmd.crouch))
 	elif cmd.light or cmd.heavy:
 		_buffered_attack = &"heavy" if cmd.heavy else &"light"
 		_buffer_frames = INPUT_BUFFER_FRAMES
@@ -382,6 +391,27 @@ func _take_buffered_attack() -> StringName:
 	return kind
 
 
+## Especiales del botón de especial según la dirección: primero los que coinciden,
+## luego los NEUTRAL como respaldo (p. ej. ↓+especial sin barra hace la resortera).
+## El contexto (suelo/aire) y el poder se revisan al ejecutarlos.
+func _button_specials(forward: int, down: bool) -> Array[SpecialMoveData]:
+	var wanted := SpecialMoveData.ButtonInput.NEUTRAL
+	if down:
+		wanted = SpecialMoveData.ButtonInput.DOWN
+	elif forward > 0:
+		wanted = SpecialMoveData.ButtonInput.FORWARD
+	var exact: Array[SpecialMoveData] = []
+	var neutral: Array[SpecialMoveData] = []
+	for sp in data.specials:
+		if sp == null:
+			continue
+		if sp.button_input == wanted and wanted != SpecialMoveData.ButtonInput.NEUTRAL:
+			exact.append(sp)
+		elif sp.button_input == SpecialMoveData.ButtonInput.NEUTRAL:
+			neutral.append(sp)
+	return exact + neutral
+
+
 ## Primer especial del buffer que se puede hacer aquí (suelo/aire) y con el poder actual.
 func _peek_buffered_special(in_air: bool) -> SpecialMoveData:
 	var projectile_out := is_instance_valid(_projectile)
@@ -399,6 +429,7 @@ func _consume_one_shots() -> void:
 	commands.jump = false
 	commands.light = false
 	commands.heavy = false
+	commands.special_button = false
 	commands.special = -1
 	commands.special_heavy = false
 

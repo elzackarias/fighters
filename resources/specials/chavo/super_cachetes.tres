@@ -9,6 +9,7 @@ script = ExtResource("1")
 move_name = "¡Ahora sí te descalabro los cachetes!"
 motion = 5
 context = 0
+button_input = 3
 power_cost = 100
 light_attack = ExtResource("2")
 

@@ -9,6 +9,7 @@ script = ExtResource("1")
 move_name = "Torta de Jamón"
 motion = 1
 context = 1
+button_input = 1
 power_cost = 0
 light_attack = ExtResource("2")
 

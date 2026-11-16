@@ -35,6 +35,7 @@ const DEFAULT_KEYS := {
 	"p1_light": [KEY_J, KEY_Z],
 	"p1_heavy": [KEY_K, KEY_X],
 	"p1_block": [KEY_L, KEY_C],
+	"p1_special": [KEY_I, KEY_V],
 	"pause": [KEY_ESCAPE, KEY_P],
 }
 const DEFAULT_PAD_BUTTONS := {
@@ -45,6 +46,7 @@ const DEFAULT_PAD_BUTTONS := {
 	"p1_light": [JOY_BUTTON_X],
 	"p1_heavy": [JOY_BUTTON_Y],
 	"p1_block": [JOY_BUTTON_RIGHT_SHOULDER],
+	"p1_special": [JOY_BUTTON_B],
 	"pause": [JOY_BUTTON_START],
 }
 

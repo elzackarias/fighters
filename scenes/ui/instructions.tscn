@@ -65,6 +65,7 @@ Agacharse .......... S  o  ↓
 Golpe ligero ...... J  o  Z   (botón X)
 Golpe pesado .... K  o  X   (botón Y)
 Bloquear ........... L  o  C   (RB)  — o mantén ATRÁS
+Especial ........... I  o  V   (botón B)
 Pausa ............... Esc  o  P"
 
 [node name="Right" type="Label" parent="Margin/VBox/Columns"]
@@ -74,13 +75,14 @@ size_flags_horizontal = 3
 size_flags_vertical = 0
 theme_override_font_sizes/font_size = 18
 autowrap_mode = 3
-text = "ESPECIALES DEL CHAVO
-(mirando a la derecha; golpe ligero o pesado)
-Resortera ................ ↓ ↘ → + golpe
-Torta de Jamón ........ ↓ ↘ → + golpe en el aire
-Escobazos ............... → ↓ ↘ + golpe
-SÚPER (1 barra) ...... ↓ ↘ → ↓ ↘ → + golpe
+text = "ESPECIALES DEL CHAVO — botón ESPECIAL: I o V (mando: B)
+Resortera .............. Especial
+Escobazos .............. → + Especial
+Torta de Jamón ...... Especial en el aire
+SÚPER (1 barra) ..... ↓ + Especial
   «¡Ahora sí te descalabro los cachetes!»
+Avanzado: ↓↘→ + golpe, →↓↘ + golpe, ↓↘→↓↘→ + golpe
+(con golpe pesado, la variante fuerte)
 
 CONSEJOS
 • Los golpes BAJOS solo se bloquean agachado; los del AIRE, de pie.

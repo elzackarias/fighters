@@ -25,20 +25,21 @@ Juego de peleas 2D estilo *Street Fighter* con los personajes de **El Chavo anim
 | Golpe ligero | `J` o `Z` | `X` |
 | Golpe pesado | `K` o `X` | `Y` |
 | Bloquear | `L` o `C` (o mantener "atrás") | `RB` |
+| Especial | `I` o `V` | `B` |
 | Pausa | `Esc` o `P` | — |
 
 Agachado + golpe = ataque bajo. En el aire + golpe = ataque aéreo. Los ataques **bajos** solo se bloquean agachado.
 
 ### Especiales del Chavo
 
-Comandos escritos mirando a la derecha (si mira a la izquierda, se invierten). Golpe ligero o pesado cambia la variante.
+Con el **botón de especial** basta una dirección. Los comandos clásicos también funcionan (escritos mirando a la derecha; si mira a la izquierda se invierten) y con golpe pesado dan la variante fuerte.
 
-| Movimiento | Comando | Notas |
-|---|---|---|
-| Resortera | `↓ ↘ →` + golpe | Proyectil; el pesado es más rápido |
-| Torta de Jamón | `↓ ↘ →` + golpe en el aire | Proyectil en arco hacia abajo |
-| Escobazos Giratorios | `→ ↓ ↘` + golpe | 3 golpes (4 con pesado), lanza al rival |
-| **Súper:** ¡Ahora sí te descalabro los cachetes! | `↓ ↘ → ↓ ↘ →` + golpe | Cuesta 1 barra, invulnerable al arrancar |
+| Movimiento | Botón de especial | Comando clásico | Notas |
+|---|---|---|---|
+| Resortera | Especial | `↓ ↘ →` + golpe | Proyectil; el pesado es más rápido |
+| Torta de Jamón | Especial en el aire | `↓ ↘ →` + golpe en el aire | Proyectil en arco hacia abajo |
+| Escobazos Giratorios | `→` + Especial | `→ ↓ ↘` + golpe | 3 golpes (4 con pesado), lanza al rival |
+| **Súper:** ¡Ahora sí te descalabro los cachetes! | `↓` + Especial | `↓ ↘ → ↓ ↘ →` + golpe | Cuesta 1 barra, invulnerable al arrancar |
 
 La **barra de poder** (bajo los nombres, hasta 3 barras) se llena al pegar y al recibir golpes y se conserva entre rounds. Un golpe normal que conecta se puede **cancelar** en un especial o súper.
 
@@ -59,7 +60,7 @@ resources/
   fighters/<id>/<id>.tres         FighterData: stats, estatura, escala del sprite, ataques
   fighters/<id>/<id>_frames.tres  SpriteFrames con todas las animaciones del personaje
   attacks/                        AttackData: daño, frames, hitbox, empuje, varios golpes, proyectil
-  specials/<id>/                  SpecialMoveData: comando, costo de poder y ataque de cada especial
+  specials/<id>/                  SpecialMoveData: comando, atajo del botón de especial, costo de poder y ataque
   levels/                         LevelData: rival, colores, tiempo, dificultad de la IA
 scenes/                           Luchador genérico, arena y pantallas de UI
 scripts/

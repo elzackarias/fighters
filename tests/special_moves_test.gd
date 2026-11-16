@@ -25,6 +25,7 @@ func _run() -> void:
 	await _test_torta_aerea()
 	await _test_cancel()
 	await _test_animacion_faltante()
+	await _test_boton_especial()
 	print("special_moves_test: OK" if _failures == 0 else "special_moves_test: %d FALLAS" % _failures)
 	quit(1 if _failures else 0)
 
@@ -111,6 +112,56 @@ func _test_animacion_faltante() -> void:
 	_check("ataque sin animación usa la de respaldo (%s)" % sprite.animation, sprite.animation == &"crouch")
 	_check("sin rectángulo amarillo si hay sprites", not visual.visible)
 	rival.commands.crouch = false
+
+
+## Botón de especial: la dirección elige el especial, sin teclear comandos.
+func _test_boton_especial() -> void:
+	await _setup(260.0)
+	await _button(0, false)
+	_check("especial solo = resortera", _anim() == &"slingshot")
+
+	await _setup(90.0)
+	await _button(1, false)
+	_check("→ + especial = escobazos", _anim() == &"broom_spin")
+
+	await _setup(120.0)
+	chavo.power = 100
+	await _button(0, true)
+	_check("↓ + especial = súper", _anim() == &"super_cheeks")
+	_check("el súper con botón gasta la barra", chavo.power == 0)
+
+	await _setup(260.0)
+	await _button(0, true)
+	_check("↓ + especial sin barra = resortera", _anim() == &"slingshot")
+
+	await _setup(220.0)
+	chavo.commands.jump = true
+	await _frames(8)
+	await _button(1, false)
+	_check("especial en el aire = torta (con cualquier dirección)", _anim() == &"sandwich_air")
+
+	# Quico no tiene especiales: el botón no debe sacar un golpe normal.
+	await _setup(260.0)
+	rival.commands.special_button = true
+	await _frames(2)
+	_check("sin especiales, el botón no hace un golpe normal", rival.get_current_attack() == null)
+
+
+func _button(forward: int, down: bool) -> void:
+	chavo.commands.move_x = float(forward)
+	chavo.commands.crouch = down
+	await _step()
+	chavo.commands.move_x = float(forward)
+	chavo.commands.crouch = down
+	chavo.commands.special_button = true
+	await _step()
+	chavo.commands.move_x = 0.0
+	chavo.commands.crouch = false
+
+
+func _anim() -> StringName:
+	var attack := chavo.get_current_attack()
+	return attack.animation if attack else &""
 
 
 # --- Utilidades --------------------------------------------------------------

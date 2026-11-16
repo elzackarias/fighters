@@ -9,6 +9,7 @@ script = ExtResource("1")
 move_name = "Resortera"
 motion = 1
 context = 0
+button_input = 1
 power_cost = 0
 light_attack = ExtResource("2")
 heavy_attack = ExtResource("3")
