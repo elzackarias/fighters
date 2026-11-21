@@ -207,6 +207,16 @@ func _register_default_inputs() -> void:
 	_add_axis("p1_left", JOY_AXIS_LEFT_X, -1.0)
 	_add_axis("p1_right", JOY_AXIS_LEFT_X, 1.0)
 	_add_axis("p1_down", JOY_AXIS_LEFT_Y, 1.0)
+	# Godot 4 no asigna botones de mando a ui_accept / ui_cancel por defecto.
+	_add_pad_button("ui_accept", JOY_BUTTON_A)
+	_add_pad_button("ui_cancel", JOY_BUTTON_B)
+
+
+func _add_pad_button(action: String, button: JoyButton) -> void:
+	var ev := InputEventJoypadButton.new()
+	ev.button_index = button
+	if not InputMap.action_has_event(action, ev):
+		InputMap.action_add_event(action, ev)
 
 
 func _add_axis(action: String, axis: JoyAxis, value: float) -> void:
